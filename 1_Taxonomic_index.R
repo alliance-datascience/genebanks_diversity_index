@@ -4,7 +4,7 @@ require(stringr)
 require(tidyr)
 require(psych)
 #install.packages("ineq")
-library(ineq)
+#library(ineq)
 #install.packages("igraph")
 #require(igraph)
 library(abdiv)
@@ -15,6 +15,7 @@ library(matrixStats)
 require(DescTools)
 require(httr)
 require(WorldFlora)
+#require(parallel)
 ################################################################################
 # minMax <- function(x) {
 #   (x - min(x)) / (max(x) - min(x))
@@ -267,29 +268,29 @@ index_function <- function(passport_data_orig,
   #creating matrix to analyze countries uniqueness per taxon
   dist_prop <- as.data.frame(matrix(nrow = nrow(x2_total), ncol = 13))
   colnames(dist_prop) <- c(
-    "Sp",
-    "sites/sites_total-sp",
-    "sites/sites_total",
+    "Taxa",
+    "countries/countries_nontaxa", # countries where the taxa is available compare with the countries of other taxa different
+    "countries/countries_total", #countries where taxa is available/total countries of the collection
     "ncountries",
-    "ncountries_total",
+    "ncountries_total_collection",
     #"ncountries_comp",
     "ncounts_Country",
-    "nprop",
+    "prop_taxa_in_collection",
     ######################
-    "sites/sites_total-sp_noNA",
-    "sites/sites_total_noNA",
+    "countries/countries_nontaxa_noNA",
+    "countries/countries_total_noNA",
     "ncountries_noNA",
-    "ncountries_total_noNA",
+    "ncountries_total_collection_noNA",
     #"ncountries_comp",
     "ncounts_nonnaCountry_noNA",
-    "nprop_noNA"
+    "prop_taxa_in_collection_noNA"
     
   )#row.names(x2)
   row.names(dist_prop) <- row.names(x2_total)
   
   #for each species
   for (i in 1:nrow(x2_total)) {
-    i <- 1
+    #i <- 1
     
     #############################################################################
     #splitting each species
@@ -327,22 +328,22 @@ index_function <- function(passport_data_orig,
     #############################################################################
     
     #taxon name
-    dist_prop[i, "Sp"] <- row.names(a)
+    dist_prop[i, "Taxa"] <- row.names(a)
     #############################################################################
     #message("Calculating metrics for non NA (countries) records ")
     
     #countries of taxon i / countries where !=i
-    dist_prop[i, "sites/sites_total-sp"] <- sum(df$a) / sum(df$b)
+    dist_prop[i, "countries/countries_nontaxa"] <- sum(df$a) / sum(df$b)
     #countries of taxon i / all countries
-    dist_prop[i, "sites/sites_total"] <- sum(df$a) / sum(df$c)
+    dist_prop[i, "countries/countries_total"] <- sum(df$a) / sum(df$c)
     #taxon i countries
     dist_prop[i, "ncountries"] <- sum(df$a)
     #all countries
-    dist_prop[i, "ncountries_total"] <- sum(df$c > 0)
+    dist_prop[i, "ncountries_total_collection"] <- sum(df$c > 0)
     #numbers of records for taxon i
     dist_prop[i, "ncounts_Country"] <- sum(x_total[i, ])
     #proportion of records for taxon i/ records of collection x 100
-    dist_prop[i, "nprop"] <- (sum(x_total[i, ]) / sum(x_total)) * 100
+    dist_prop[i, "prop_taxa_in_collection"] <- (sum(x_total[i, ]) / sum(x_total)) * 100
     #############################################################################
     #message("Calculating metrics including NA (countries) records ")
     
@@ -355,17 +356,17 @@ index_function <- function(passport_data_orig,
     #     "ncounts_nonnaCountry_NA",
     #     "nprop_NA"
     #countries of taxon i / countries where !=i
-    dist_prop[i, "sites/sites_total-sp_noNA"] <- sum(df_nonna$a) / sum(df_nonna$b)
+    dist_prop[i, "countries/countries_nontaxa_noNA"] <- sum(df_nonna$a) / sum(df_nonna$b)
     #countries of taxon i / all countries
-    dist_prop[i, "sites/sites_total_noNA"] <- sum(df_nonna$a) / sum(df_nonna$c)
+    dist_prop[i,"countries/countries_total_noNA"] <- sum(df_nonna$a) / sum(df_nonna$c)
     #taxon i countries
     dist_prop[i, "ncountries_noNA"] <- sum(df_nonna$a)
     #all countries
     dist_prop[i, "ncountries_total_noNA"] <- sum(df_nonna$c > 0)
     #numbers of records for taxon i
-    dist_prop[i, "ncounts_nonnaCountry_noNA"] <- sum(x2_non_na[i, ])
+    dist_prop[i, "ncountries_total_collection_noNA"] <- sum(x2_non_na[i, ])
     #proportion of records for taxon i/ records of collection x 100
-    dist_prop[i, "nprop_noNA"] <- (sum(x2_non_na[i, ]) / sum(x2_non_na)) * 100
+    dist_prop[i, "prop_taxa_in_collection_noNA"] <- (sum(x2_non_na[i, ]) / sum(x2_non_na)) * 100
     rm(df, a, b, a_nonna, b_nonna, df_nonna)
   }
   rm(i)
@@ -474,10 +475,10 @@ index_function <- function(passport_data_orig,
   dist_prop$WOF_taxa <- NA 
   dist_prop$WOF <- NA 
   dist_prop$WOF_taxa_id <- NA 
-  #species in grin
+  
   for (i in 1:nrow(dist_prop)){
     #message(i)
-    #i <- 2
+    #i <- 1
     #dist_prop$taxon[[i]]
     #x1 <- WorldFlora::WFO.match(dist_prop$taxon[[i]],WFO.data = WFO.data,verbose = F)
     #x1 <- WorldFlora::WFO.match("Phaseolus grayanus",WFO.data = WFO.data,verbose = F)
@@ -486,15 +487,15 @@ index_function <- function(passport_data_orig,
                         WFO.data=WFO.data,verbose = F
                         #fuzzydist.max=3
                         ),verbose = F)
-    
-    #x1 <- WFO.one(x1,verbose = F,priority = "Accepted")#x1[x1$Subseq==1,]    
+
+    #x1 <- WFO.one(x1,verbose = F,priority = "Accepted")#x1[x1$Subseq==1,]
     #WorldFlora::WFO.match("Phaseolus nanus",WFO.data = WFO.data)
     dist_prop$WOF_taxa[[i]] <- x1$scientificName
     dist_prop$WOF_taxa_id[[i]] <- x1$taxonID
     if(is.na(x1$scientificName)){
-      dist_prop$WOF[[i]] <- 0 
+      dist_prop$WOF[[i]] <- 0
     } else {
-      dist_prop$WOF[[i]] <- 1 
+      dist_prop$WOF[[i]] <- 1
     }
     rm(x1)
   };rm(i)
@@ -509,12 +510,12 @@ index_function <- function(passport_data_orig,
   dist_prop$non_native_countries_R <- NA
   dist_prop$na_countries_R <- NA
   for (i in 1:nrow(dist_prop)) {
-    #i <- 17
+    #i <- 2
     x_i <- dist_prop[i, ]
     nat_i <- native_countries_list$ISO3_n[which(native_countries_list$taxa ==
                                                   x_i$taxon)]
     if (x_i$status == "wild") {
-      x_count <- df_wild[which(row.names(df_wild) == x_i$Sp), ]
+      x_count <- df_wild[which(row.names(df_wild) == x_i$Taxa), ]
       x_count_nat <- x_count[, colnames(x_count) %in% nat_i]
       x_count_nonnat <- x_count[, !colnames(x_count) %in% nat_i]
       x_count_na <- x_count_nonnat
@@ -528,7 +529,7 @@ index_function <- function(passport_data_orig,
       dist_prop$non_native_countries_R[[i]] <- sum(x_count_nonnat)
       dist_prop$na_countries_R[[i]] <- sum(x_count_na)
     } else if (x_i$status == "landrace") {
-      x_count <- df_landrace[which(row.names(df_landrace) == x_i$Sp), ]
+      x_count <- df_landrace[which(row.names(df_landrace) == x_i$Taxa), ]
       x_count_nat <- x_count[, colnames(x_count) %in% nat_i]
       x_count_nonnat <- x_count[, !colnames(x_count) %in% nat_i]
       x_count_na <- x_count_nonnat
@@ -542,7 +543,7 @@ index_function <- function(passport_data_orig,
       dist_prop$non_native_countries_R[[i]] <- sum(x_count_nonnat)
       dist_prop$na_countries_R[[i]] <- sum(x_count_na)
     } else if (x_i$status == "hybrid") {
-      x_count <- df_hybrid[which(row.names(df_hybrid) == x_i$Sp), ]
+      x_count <- df_hybrid[which(row.names(df_hybrid) == x_i$Taxa), ]
       x_count_nat <- x_count[, colnames(x_count) %in% nat_i]
       x_count_nonnat <- x_count[, !colnames(x_count) %in% nat_i]
       x_count_na <- x_count_nonnat
@@ -561,11 +562,11 @@ index_function <- function(passport_data_orig,
   dist_prop$total_records <- NA
   
   dist_prop$total_records <-   dist_prop$native_countries_R +
-    dist_prop$non_native_countries_R + dist_prop$na_countries_R
+  dist_prop$non_native_countries_R + dist_prop$na_countries_R
   #ecogeography indexes
   message("Calculating ecogeographic passport based indexes")
   dist_prop$nCounnat_countotal <- dist_prop$native_countries / dist_prop$total_native_countries
-  dist_prop$nCounnonnat_countotal <- dist_prop$native_countries / dist_prop$ncountries_total
+  dist_prop$nCounnonnat_countotal <- dist_prop$native_countries / dist_prop$ncountries_total_collection
   dist_prop$nat_nonnat <- dist_prop$native_countries / dist_prop$non_native_countries
   dist_prop$nat_nonnat[which(dist_prop$nat_nonnat == Inf)] <- NA
   
@@ -1008,16 +1009,16 @@ and good eveness (similar number of records)
 
 ################################################################################
 ################################################################################
-dir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
-#dir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX"
+#dir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
+dir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX"
 #dir <-  "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
 ################################################################################
 #outdir
 outdir <- paste0(dir, "/BEANS/RESULTS")
 ################################################################################
 
-inDir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
-#inDir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
+#inDir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
+inDir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
 tax_table <- "taxonomy_species.txt"
 geo_table <- "geography.txt"
 taxonomy_geography_map_table <- "taxonomy_geography_map.txt"
@@ -1046,7 +1047,9 @@ passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/genesys-accession
 API <- "mtfcmg5AttZ2kaJSWdsq9MkEjfhW41gjeSvm"
 ################################################################################
 #Loading WorldFlora Online
-WorldFlora::WFO.remember("D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO_Backbone.zip")
+#WorldFlora::WFO.remember("D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO_Backbone.zip")
+WorldFlora::WFO.remember(WFO.file = "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
+
 ################################################################################
 #CIAT codes= "beans"   "forages" "cassava"
 passport_data_orig <- passport_data_original[which(passport_data_original$CROPCODE ==
