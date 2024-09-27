@@ -285,11 +285,22 @@ genetics_ind_function <- function(outdir,
   status_total$sp_status[which(status_total$seq_records > 0)] <- 1
   
   #sum(status_total$prop_seq,na.rm = T)
-  IND <- sum(status_total$prop_seq * status_total$prop_seq_collection,
-             na.rm = T) / sum(status_total$prop_seq_collection, na.rm = T)
-  IND2 <- sum(status_total$sp_status,na.rm = T)/nrow(status_total)
+  # IND <- sum(status_total$prop_seq * status_total$prop_seq_collection,
+  #            na.rm = T) / sum(status_total$prop_seq_collection, na.rm = T)
+  # IND_a <- sum(status_total$prop_seq * status_total$prop_rec_collection,
+  #            na.rm = T) / sum(status_total$prop_rec_collection, na.rm = T)
+   IND <- weighted.mean(status_total$prop_seq, 
+                        status_total$prop_seq_collection,
+                        na.rm=T)
+   IND_a <- weighted.mean(status_total$prop_seq, 
+                        status_total$prop_rec_collection,
+                        na.rm=T)
+   IND2 <- sum(status_total$sp_status,na.rm = T)/nrow(status_total)
   message("Saving results")
-  results <- list(summary_table = status_total, indicator1 = IND,indicator2=IND2)
+  results <- list(summary_table = status_total, 
+                  indicator1_seq_prop = IND,
+                  indicator1_rec_prop = IND_a,
+                  indicator2=IND2)
   message("DONE!")
   return(results)
 }
@@ -337,9 +348,19 @@ accessions_df <- as.data.frame(
     sheet = collection_name
   )
 )
+
+accessions_df$Accession <- gsub("^F", "", accessions_df$Accession) 
 x3 <- genetics_ind_function(outdir, collection_name, numCores, accessions_df)
 
+# x1$indicator1_seq_prop
+# x2$indicator1_seq_prop
+# x3$indicator1_seq_prop
 
-x1$indicator
-x2$indicator
-x3$indicator
+x1$indicator1_rec_prop
+x2$indicator1_rec_prop
+x3$indicator1_rec_prop
+
+
+x1$indicator2
+x2$indicator2
+x3$indicator2
