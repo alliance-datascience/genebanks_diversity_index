@@ -37,6 +37,8 @@ index_function <- function(passport_data_orig,
                            API,
                            collection_name) {
   message("PART 0: ommiting plant breeding material and weedy")
+  
+  if(!file.exists(paste0(outdir, "/", collection_name, "_subsets.RDS"))){
   #ommiting plant breeding material
   passport_data_orig <- passport_data_orig[!passport_data_orig$SAMPSTAT %in% c(200, 412, 413, 414, 415, 416, 420, 421, 422, 423, 500, 600), ]
   
@@ -182,6 +184,8 @@ index_function <- function(passport_data_orig,
   
   
   ###
+
+  
   ################################################################################
   #validating counts for wild and landraces
   # common_passport <- rbind(passport_data_l, passport_data_w)
@@ -232,6 +236,8 @@ index_function <- function(passport_data_orig,
     collection_name,
     "_count_matrix_countries.csv"
   ))
+  
+
   #df_total
   ################################################################################
   #obtaining distances for countries
@@ -259,38 +265,81 @@ index_function <- function(passport_data_orig,
   
   
   ################################################################################
+  #removing NA from counts
+  df_total_nonNA <- df_total
+  df_total_nonNA <- df_total_nonNA[, !colnames(df_total_nonNA) %in% "NA1"]
+  #df that are NA in country
+  df_total_NA <- df_total
+  df_total_NA <- df_total_NA[, colnames(df_total_NA) %in% "NA1"]
+  ################################################################################
+  #saving subsets to use for further steps
+  subsets <- list(
+  passport_data_w,
+  passport_data_l,
+  passport_data_h,
+  df_total,
+  df_total_nonNA,
+  df_total_NA,
+  x_total,
+  x2_total,
+  x2_non_na,
+  df_wild,
+  df_landrace,
+  df_hybrid
+  )
+  message("saving  previous results")
+  #save.image(paste0(outdir, "/", collection_name, "_subsets_1.RData"))
+  saveRDS(subsets,paste0(outdir, "/", collection_name, "_subsets.RDS"))
+  } else {
+    message("reading  previous results")
+    #load(paste0(outdir, "/", collection_name, "_subsets_1.RData"))
+    subsets <- readRDS(paste0(outdir, "/", collection_name, "_subsets.RDS"))
+    passport_data_w <- subsets[[1]]
+    passport_data_l <- subsets[[2]]
+    passport_data_h <- subsets[[3]]
+    df_total <- subsets[[4]]
+    df_total_nonNA <- subsets[[5]]
+    df_total_NA <- subsets[[6]]
+    x_total <- subsets[[7]]
+    x2_total <- subsets[[8]]
+    x2_non_na <- subsets[[9]]
+    df_wild <- subsets[[10]]
+    df_landrace <- subsets[[11]]
+    df_hybrid <- subsets[[12]]
+  }
   
   
   ################################################################################
-  
   message("CREATING SUMMARY TABLE FOR COUNTRIES AND TAXA")
   message("USING ONLY RECORDS WITH ORIGCTY INFORMATION")
   #creating matrix to analyze countries uniqueness per taxon
-  dist_prop <- as.data.frame(matrix(nrow = nrow(x2_total), ncol = 13))
+  dist_prop <- as.data.frame(matrix(nrow = nrow(x2_total), ncol = 15))
   colnames(dist_prop) <- c(
     "Taxa",
+    #####################
     "countries/countries_nontaxa", # countries where the taxa is available compare with the countries of other taxa different
     "countries/countries_total", #countries where taxa is available/total countries of the collection
     "ncountries",
     "ncountries_total_collection",
-    #"ncountries_comp",
-    "ncounts_Country",
-    "prop_taxa_in_collection",
     ######################
     "countries/countries_nontaxa_noNA",
     "countries/countries_total_noNA",
     "ncountries_noNA",
     "ncountries_total_collection_noNA",
-    #"ncountries_comp",
+    ######################
+    "ncounts_Country",
     "ncounts_nonnaCountry_noNA",
-    "prop_taxa_in_collection_noNA"
+    "ncounts_NA",
+    "prop_taxa_in_collection",
+    "prop_taxa_in_collection_noNA",
+    "prop_taxa_in_collectionNA"
     
   )#row.names(x2)
   row.names(dist_prop) <- row.names(x2_total)
   
   #for each species
   for (i in 1:nrow(x2_total)) {
-    #i <- 1
+   # i <- 48#1
     
     #############################################################################
     #splitting each species
@@ -330,43 +379,42 @@ index_function <- function(passport_data_orig,
     #taxon name
     dist_prop[i, "Taxa"] <- row.names(a)
     #############################################################################
-    #message("Calculating metrics for non NA (countries) records ")
-    
+    #message("Calculating metrics including NA (countries) records ")
     #countries of taxon i / countries where !=i
     dist_prop[i, "countries/countries_nontaxa"] <- sum(df$a) / sum(df$b)
     #countries of taxon i / all countries
-    dist_prop[i, "countries/countries_total"] <- sum(df$a) / sum(df$c)
+    dist_prop[i, "countries/countries_total"] <- sum(df$a) / ncol(x_total)
     #taxon i countries
     dist_prop[i, "ncountries"] <- sum(df$a)
     #all countries
-    dist_prop[i, "ncountries_total_collection"] <- sum(df$c > 0)
-    #numbers of records for taxon i
-    dist_prop[i, "ncounts_Country"] <- sum(x_total[i, ])
-    #proportion of records for taxon i/ records of collection x 100
-    dist_prop[i, "prop_taxa_in_collection"] <- (sum(x_total[i, ]) / sum(x_total)) * 100
+    dist_prop[i, "ncountries_total_collection"] <- ncol(x_total)#sum(df$c > 0)
+    ############################################################################
     #############################################################################
-    #message("Calculating metrics including NA (countries) records ")
-    
-    #
-    #     "sites/sites_total-sp_NA",
-    #     "sites/sites_total_NA",
-    #     "ncountries_NA",
-    #     "ncountries_total_NA",
-    #     #"ncountries_comp",
-    #     "ncounts_nonnaCountry_NA",
-    #     "nprop_NA"
+    #message("Calculating metrics for non NA (countries) records ")
     #countries of taxon i / countries where !=i
     dist_prop[i, "countries/countries_nontaxa_noNA"] <- sum(df_nonna$a) / sum(df_nonna$b)
     #countries of taxon i / all countries
-    dist_prop[i,"countries/countries_total_noNA"] <- sum(df_nonna$a) / sum(df_nonna$c)
+    dist_prop[i,"countries/countries_total_noNA"] <- sum(df_nonna$a) / ncol(x2_non_na)
     #taxon i countries
     dist_prop[i, "ncountries_noNA"] <- sum(df_nonna$a)
     #all countries
-    dist_prop[i, "ncountries_total_noNA"] <- sum(df_nonna$c > 0)
-    #numbers of records for taxon i
-    dist_prop[i, "ncountries_total_collection_noNA"] <- sum(x2_non_na[i, ])
-    #proportion of records for taxon i/ records of collection x 100
-    dist_prop[i, "prop_taxa_in_collection_noNA"] <- (sum(x2_non_na[i, ]) / sum(x2_non_na)) * 100
+    dist_prop[i, "ncountries_total_collection_noNA"] <- ncol(x2_non_na)#sum(df_nonna$c > 0)
+  
+    #############################################################################
+    #numbers of records for taxon i ALL
+    dist_prop[i, "ncounts_Country"] <- sum(df_total[i, ])
+    #proportion of records for taxon i/ records of collection x 100 ALL
+    dist_prop[i, "prop_taxa_in_collection"] <- (sum(df_total[i, ]) / sum(df_total))
+    #numbers of records for taxon i NON NA
+    dist_prop[i, "ncounts_nonnaCountry_noNA"] <- sum(df_total_nonNA[i, ])  
+    #proportion of records for taxon i/ records of collection x 100 NON NA
+    dist_prop[i, "prop_taxa_in_collection_noNA"] <- (sum(df_total_nonNA[i, ]) / sum(df_total_nonNA))
+    #numbers of records for taxon i NA
+    dist_prop[i, "ncounts_NA"] <-df_total_NA[i]
+    #proportion of records for taxon i/ records of collection x 100 NA
+    dist_prop[i, "prop_taxa_in_collectionNA"] <- df_total_NA[i]/ sum(df_total_NA,na.rm = T)
+    #message("Calculating metrics for non NA (countries) records ")
+    
     rm(df, a, b, a_nonna, b_nonna, df_nonna)
   }
   rm(i)
@@ -448,7 +496,7 @@ index_function <- function(passport_data_orig,
   };rm(i)
 #  dist_prop$GRIN_ID <-    accepted_grin_tax_list$grin_id_cur
   ###############################################################################
-  message("OBTAINING NATIVE COUNTRIES (ISO3) FORSPECIES MATCHING WITH GRIN TAXONOMY")
+  message("OBTAINING NATIVE COUNT RIES (ISO3) FORSPECIES MATCHING WITH GRIN TAXONOMY")
   native_countries_list <- do.call(rbind, native_countries_list)
   
   ###############################################################################
@@ -627,7 +675,7 @@ index_function <- function(passport_data_orig,
   ################################################################################
   message("Obtaining IUCN status")
   
-  headers = c(accept = "application/json", Authorization = "mtfcmg5AttZ2kaJSWdsq9MkEjfhW41gjeSvm")
+  headers = c(accept = "application/json", Authorization = API)
   
   for (i in 1:nrow(stat)) {
     #i <- 1
@@ -669,7 +717,7 @@ index_function <- function(passport_data_orig,
     } else {
       stat$IUCN[[i]] <- NA
     }
-    #Sys.sleep(0.01)
+    Sys.sleep(0.01)
   };rm(i)  # params = list(
   #   genus_name = "Phaseolus",
   #   species_name = "vulgaris",
@@ -1009,16 +1057,15 @@ and good eveness (similar number of records)
 
 ################################################################################
 ################################################################################
-#dir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
-dir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX"
-#dir <-  "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
+dir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
+#dir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX"
 ################################################################################
 #outdir
 outdir <- paste0(dir, "/BEANS/RESULTS")
 ################################################################################
 
-#inDir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
-inDir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
+inDir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
+#inDir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
 tax_table <- "taxonomy_species.txt"
 geo_table <- "geography.txt"
 taxonomy_geography_map_table <- "taxonomy_geography_map.txt"
@@ -1026,20 +1073,34 @@ taxonomy_geography_map_table <- "taxonomy_geography_map.txt"
 #obtain the geography_id, first filter using the geography_status_code
 #finally use the geo_table to get the ISO3 and is_valid is_valid
 ################################################################################
-tax <- data.table::fread(paste0(inDir, "/", tax_table))
-#obtaining taxon status (wild or landrace)
-stat <- strsplit(tax$name, " ")
-#status
-tax$GENUS <- trimws(unlist(lapply(stat, `[[`, 1)))
-tax <- as.data.frame(tax)
+#reading taxonomy table 
+if(!exists("tax")){
+  tax <- data.table::fread(paste0(inDir, "/", tax_table))  
+  #obtaining taxon status (wild or landrace)
+  stat <- strsplit(tax$name, " ")
+  #status
+  tax$GENUS <- trimws(unlist(lapply(stat, `[[`, 1)))
+  tax <- as.data.frame(tax)
+}
+
 ################################################################################
-geo <- as.data.frame(data.table::fread(paste0(inDir, "/", geo_table)))
+#geography data 
+if(!exists("geo")){
+  geo <- as.data.frame(data.table::fread(paste0(inDir, "/", geo_table)))
+  }
+
+#table with geography and taxonomy data
+if(!exists("tax_geo")){
 tax_geo <- as.data.frame(data.table::fread(paste0(inDir, "/", taxonomy_geography_map_table)))
+}
 ################################################################################
 #read PDCI data
 #passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/ciat_pdci.csv"), na.strings = NA)
-passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/genesys-accessions-COL003.csv"),
-                                   na.strings = NA)
+if(!exists("passport_data_original")){
+  passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/genesys-accessions-COL003.csv"),
+                                     na.strings = NA)  
+}
+
 #subsetting to beans
 # passport_data_orig <- passport_data_orig[which(passport_data_orig$GENUS ==
 ################################################################################
@@ -1047,8 +1108,10 @@ passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/genesys-accession
 API <- "mtfcmg5AttZ2kaJSWdsq9MkEjfhW41gjeSvm"
 ################################################################################
 #Loading WorldFlora Online
-#WorldFlora::WFO.remember("D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO_Backbone.zip")
-WorldFlora::WFO.remember(WFO.file = "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
+if(!exists("WFO.data")){
+WorldFlora::WFO.remember("D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO_Backbone.zip")
+}
+  #WorldFlora::WFO.remember(WFO.file = "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
 
 ################################################################################
 #CIAT codes= "beans"   "forages" "cassava"
