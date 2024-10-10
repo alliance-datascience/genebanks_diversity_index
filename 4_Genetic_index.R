@@ -10,7 +10,7 @@ genetics_ind_function <- function(outdir,
   message(paste0("Processing collection: ",collection_name,"... "))
   message("Loading results of 1_Taxonomic_index")
   ################################################################################
-  subsets <- readRDS(paste0(outdir, "/", collection_name, "_subsets.RDS"))
+  subsets <- readRDS(paste0(outdir, "/", collection_name, "/", collection_name, "_subsets_new_1.RDS"))
   ################################################################################
   #polish accession numbers by removing extra spaces
   accessions_df[, 1] <- trimws(accessions_df[, 1])
@@ -284,23 +284,71 @@ genetics_ind_function <- function(outdir,
   status_total$sp_status <- NA
   status_total$sp_status[which(status_total$seq_records > 0)] <- 1
   
+  status_total$collection <- NA
+  status_total$collection <- collection_name
   #sum(status_total$prop_seq,na.rm = T)
   # IND <- sum(status_total$prop_seq * status_total$prop_seq_collection,
   #            na.rm = T) / sum(status_total$prop_seq_collection, na.rm = T)
   # IND_a <- sum(status_total$prop_seq * status_total$prop_rec_collection,
   #            na.rm = T) / sum(status_total$prop_rec_collection, na.rm = T)
    IND <- weighted.mean(status_total$prop_seq, 
-                        status_total$prop_seq_collection,
-                        na.rm=T)
-   IND_a <- weighted.mean(status_total$prop_seq, 
                         status_total$prop_rec_collection,
                         na.rm=T)
+   
+   IND_W <- weighted.mean(status_total$prop_seq[which(status_total$status=="wild")], 
+                        status_total$prop_rec_collection[which(status_total$status=="wild")],
+                        na.rm=T)
+   
+   IND_L <- weighted.mean(status_total$prop_seq[which(status_total$status=="landrace")], 
+                          status_total$prop_rec_collection[which(status_total$status=="landrace")],
+                          na.rm=T)
+   
+   IND_H <- weighted.mean(status_total$prop_seq[which(status_total$status=="hybrid")], 
+                          status_total$prop_rec_collection[which(status_total$status=="hybrid")],
+                          na.rm=T)
+   
+   # IND_a <- weighted.mean(status_total$prop_seq, 
+   #                      status_total$prop_rec_collection,
+   #                      na.rm=T)
    IND2 <- sum(status_total$sp_status,na.rm = T)/nrow(status_total)
+   IND2_W <- sum(status_total$sp_status[which(status_total$status=="wild")],na.rm = T)/
+     nrow(status_total[which(status_total$status=="wild"),])
+   IND2_L <- sum(status_total$sp_status[which(status_total$status=="landrace")],na.rm = T)/
+     nrow(status_total[which(status_total$status=="landrace"),])
+   IND2_H <- sum(status_total$sp_status[which(status_total$status=="hybrid")],na.rm = T)/
+     nrow(status_total[which(status_total$status=="hybrid"),])
   message("Saving results")
+  
+  x_div_df <- data.frame(matrix(ncol=4,nrow = 4))
+  colnames(x_div_df) <- c("status","index_1", "index_2","collection")
+  x_div_df[,1] <- c("wild","landrace","hybrid","total")
+  #
+  x_div_df[1,2] <- IND_W
+  x_div_df[2,2] <- IND_L
+  x_div_df[3,2] <- IND_H
+  x_div_df[4,2] <- IND
+  #
+  x_div_df[1,3] <- IND2_W
+  x_div_df[2,3] <- IND2_L
+  x_div_df[3,3] <- IND2_H
+  x_div_df[4,3] <- IND2
+  #
+  x_div_df[,4] <- collection_name
   results <- list(summary_table = status_total, 
-                  indicator1_seq_prop = IND,
-                  indicator1_rec_prop = IND_a,
-                  indicator2=IND2)
+                  indexes= x_div_df)
+  write.csv(
+    status_total,
+    paste0(outdir, "/", collection_name,"/", collection_name, "_4_genetics_summary_table.csv"),
+    row.names = F,
+    na = ""
+  )
+  
+  write.csv(
+    x_div_df,
+    paste0(outdir, "/", collection_name,"/", collection_name, "_4_GI_table.csv"),
+    row.names = F,
+    na = ""
+  )
   message("DONE!")
   return(results)
 }
@@ -318,7 +366,8 @@ collection_name <- "beans"
 #loading acccessions sequenced
 accessions_df <- as.data.frame(
   readxl::read_xlsx(
-    "D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesSept2024.xlsx",
+    #"D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesSept2024.xlsx",
+    "D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesOct2024.xlsx",
     sheet = collection_name
   )
 )
@@ -331,7 +380,7 @@ collection_name <- "cassava"
 #loading acccessions sequenced
 accessions_df <- as.data.frame(
   readxl::read_xlsx(
-    "D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesSept2024.xlsx",
+    "D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesOct2024.xlsx",
     sheet = collection_name
   )
 )
@@ -344,7 +393,7 @@ collection_name <- "forages"
 #loading acccessions sequenced
 accessions_df <- as.data.frame(
   readxl::read_xlsx(
-    "D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesSept2024.xlsx",
+    "D:/OneDrive - CGIAR/GERMPLASM_INDEX/CIAT Data/ListaGenotipadoYuca_frijol_forrajesOct2024.xlsx",
     sheet = collection_name
   )
 )
@@ -356,11 +405,14 @@ x3 <- genetics_ind_function(outdir, collection_name, numCores, accessions_df)
 # x2$indicator1_seq_prop
 # x3$indicator1_seq_prop
 
-x1$indicator1_rec_prop
-x2$indicator1_rec_prop
-x3$indicator1_rec_prop
+
+x_ind <- rbind(x1$indexes,x2$indexes)
+x_ind <- rbind(x_ind,x3$indexes)
 
 
-x1$indicator2
-x2$indicator2
-x3$indicator2
+write.csv(
+  x_ind,
+  paste0(outdir, "/", "CIAT_4_GI_table.csv"),
+  row.names = F,
+  na = ""
+)

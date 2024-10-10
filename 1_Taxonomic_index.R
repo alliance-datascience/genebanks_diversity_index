@@ -36,9 +36,15 @@ index_function <- function(passport_data_orig,
                            outdir,
                            API,
                            collection_name) {
+  
+  message("Preprocessing: creating subfolder")
+  if(!dir.exists(paste0(outdir, "/", collection_name))){
+    dir.create(paste0(outdir, "/", collection_name))
+  }
+  
   message("PART 0: ommiting plant breeding material and weedy")
   
-  if(!file.exists(paste0(outdir, "/", collection_name, "_subsets.RDS"))){
+  if(!file.exists(paste0(outdir, "/", collection_name,"/",collection_name, "_subsets_new_1.RDS"))){
   #ommiting plant breeding material
   passport_data_orig <- passport_data_orig[!passport_data_orig$SAMPSTAT %in% c(200, 412, 413, 414, 415, 416, 420, 421, 422, 423, 500, 600), ]
   
@@ -225,7 +231,7 @@ index_function <- function(passport_data_orig,
   
   write.csv(
     df_total2,
-    paste0(outdir, "/", collection_name, "_count_matrix_countries.csv"),
+    paste0(outdir, "/", collection_name, "/", collection_name,"_count_matrix_countries_1.csv"),
     row.names = T,
     na = ""
   )
@@ -234,7 +240,9 @@ index_function <- function(passport_data_orig,
     outdir,
     "/",
     collection_name,
-    "_count_matrix_countries.csv"
+    "/", 
+    collection_name,
+    "_count_matrix_countries_1.csv"
   ))
   
 
@@ -289,11 +297,11 @@ index_function <- function(passport_data_orig,
   )
   message("saving  previous results")
   #save.image(paste0(outdir, "/", collection_name, "_subsets_1.RData"))
-  saveRDS(subsets,paste0(outdir, "/", collection_name, "_subsets.RDS"))
+  saveRDS(subsets,paste0(outdir, "/", collection_name, "/", collection_name, "_subsets_new_1.RDS"))
   } else {
     message("reading  previous results")
     #load(paste0(outdir, "/", collection_name, "_subsets_1.RData"))
-    subsets <- readRDS(paste0(outdir, "/", collection_name, "_subsets.RDS"))
+    subsets <- readRDS(paste0(outdir, "/", collection_name, "/", collection_name,"_subsets_new_1.RDS"))
     passport_data_w <- subsets[[1]]
     passport_data_l <- subsets[[2]]
     passport_data_h <- subsets[[3]]
@@ -340,7 +348,7 @@ index_function <- function(passport_data_orig,
   #for each species
   for (i in 1:nrow(x2_total)) {
    # i <- 48#1
-    
+    #i <- 9
     #############################################################################
     #splitting each species
     a <- x2_total[i, ]
@@ -441,14 +449,21 @@ index_function <- function(passport_data_orig,
   for (i in 1:length(unique_taxa)) {
     #i <- 1
     tax_i <- tax[tax$name %in% unique_taxa[[i]], ]
-    tax_i <- tax_i[!tax_i$synonym_code %in% c("I", "S"), ]
+    tax_i <- tax_i[!tax_i$synonym_code %in% c("I"),]#, "S"), ] #no invalidos no sinonimo
+    if(nrow(tax_i)>1){
+      tax_i <- tax_i[!tax_i$synonym_code %in% c("S"),]#, "S"), ] 
+    }
+    tax_i_cur <- tax[tax$current_taxonomy_species_id==tax_i$current_taxonomy_species_id, ]
+    tax_i_cur <- tax_i_cur[tax_i_cur$taxonomy_species_id==tax_i_cur$current_taxonomy_species_id,]
+    tax_i_cur <- tax_i_cur$name
     #message(nrow(tax_i))
     if (nrow(tax_i) > 0) {
       dist_prop$GRIN[which(dist_prop$taxon == unique_taxa[[i]])] <- 1
       accepted_grin_tax_list[[i]] <- data.frame(
         taxa = unique_taxa[[i]],
         grin_id = tax_i$taxonomy_species_id,
-        grin_id_cur = tax_i$current_taxonomy_species_id
+        grin_id_cur = tax_i$current_taxonomy_species_id,
+        grin_taxon = tax_i_cur
       )
       
       tax_geo_i <- tax_geo[which(tax_geo$taxonomy_species_id == tax_i$current_taxonomy_species_id), ]
@@ -474,7 +489,8 @@ index_function <- function(passport_data_orig,
       dist_prop$GRIN[which(dist_prop$taxon == unique_taxa[[i]])] <- 0
       accepted_grin_tax_list[[i]] <- data.frame(taxa = unique_taxa[[i]],
                                                 grin_id = NA,
-                                                grin_id_cur = NA)
+                                                grin_id_cur = NA,
+                                                grin_taxon=NA)
       native_countries_list[[i]] <- data.frame(
         taxa = unique_taxa[[i]],
         grin_id = NA,
@@ -490,9 +506,11 @@ index_function <- function(passport_data_orig,
   
   
   dist_prop$GRIN_ID <- NA
-  
+  dist_prop$GRIN_taxon <- NA
   for(i in 1:nrow(dist_prop)){
+    #i <- 1
     dist_prop$GRIN_ID[[i]] <-accepted_grin_tax_list$grin_id_cur[accepted_grin_tax_list$taxa %in% dist_prop$taxon[[i]]]
+    dist_prop$GRIN_taxon[[i]] <-accepted_grin_tax_list$grin_taxon[accepted_grin_tax_list$taxa %in% dist_prop$taxon[[i]]]
   };rm(i)
 #  dist_prop$GRIN_ID <-    accepted_grin_tax_list$grin_id_cur
   ###############################################################################
@@ -524,6 +542,7 @@ index_function <- function(passport_data_orig,
   dist_prop$WOF <- NA 
   dist_prop$WOF_taxa_id <- NA 
   
+  #WorldFlora::WFO.remember(WFO.file = "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
   for (i in 1:nrow(dist_prop)){
     #message(i)
     #i <- 1
@@ -621,11 +640,11 @@ index_function <- function(passport_data_orig,
   
   write.csv(
     native_countries_list,
-    paste0(outdir, "/", collection_name, "_native_iso3.csv"),
+    paste0(outdir, "/", collection_name, "/", collection_name, "_native_iso3_new_1.csv"),
     row.names = F,
     na = ""
   )
-  message(paste0("Saved: ", outdir, "/", collection_name, "_native_iso3.csv"))
+  message(paste0("Saved: ", outdir, "/", collection_name, "/", collection_name, "_native_iso3_1.csv"))
   ################################################################################
   ################################################################################
   
@@ -734,13 +753,20 @@ index_function <- function(passport_data_orig,
     
   }
   rm(i)
+  
+  #changing order
+  dist_prop$Taxa <- dist_prop$taxon
+  dist_prop$taxon <- NULL
+  
+ dist_prop <- 
+  dist_prop[,c(1,16,2:15,17,18,19,21,22,20,33,23:32)]
   write.csv(
     dist_prop,
-    paste0(outdir, "/", collection_name, "_summary_table.csv"),
+    paste0(outdir, "/", collection_name,"/", collection_name,  "_summary_table.csv"),
     row.names = F,
     na = ""
   )
-  message(paste0("Saved: ", outdir, "/", collection_name, "_summary_table.csv"))
+  message(paste0("Saved: ", outdir, "/", collection_name, "/", collection_name, "_summary_table.csv"))
   
   
   ################################################################################
@@ -748,10 +774,10 @@ index_function <- function(passport_data_orig,
   message("CALCULATING GINI-SIMPSON FOR COUNTRIES")
   
   #taxonomy index is 1- Gini (inequality) * 1- alpha (diversity) * Piellou (eveness)
-  "
-if the index is high then the collection has a high diversity, good balance of records,
-and good eveness (similar number of records)
-"
+#  "
+#if the index is high then the collection has a high diversity, good balance of records,
+#and good eveness (similar number of records)
+#"
   # #taxonomy index all
   # I1_all <- (1 - ineq::ineq(dist_prop$ncountries, type = "Gini")) *
   #   abdiv::simpson(dist_prop$ncountries)# *
@@ -909,74 +935,80 @@ and good eveness (similar number of records)
   }
   rm(x)
   ##############################################################################
-  #wild
-  IT1_W  <- (1 - PROPSP1R_W) * GINI_SIMPSON_W * SGRIN_W
-  #landrace
-  IT1_L  <-   (1 - PROPSP1R_L) * GINI_SIMPSON_L * SGRIN_L
-  #hybrid
-  IT1_H  <-   (1 - PROPSP1R_H) * GINI_SIMPSON_H * SGRIN_H
-  
+  # #wild
+  # IT1_W  <- (1 - PROPSP1R_W) * GINI_SIMPSON_W * SGRIN_W
+  # #landrace
+  # IT1_L  <-   (1 - PROPSP1R_L) * GINI_SIMPSON_L * SGRIN_L
+  # #hybrid
+  # IT1_H  <-   (1 - PROPSP1R_H) * GINI_SIMPSON_H * SGRIN_H
+  # 
   ##############################################################################
   #IT1_FINAL_MEAN <- (IT1_W + IT1_L)/2
   #IT_FINAL_MIN <- min(IT_W,IT_L)
   
   ##############################################################################
-  IT2_W  <- ATK_W * GINI_SIMPSON_W * SGRIN_W
-  IT2_L  <-   ATK_L * GINI_SIMPSON_L * SGRIN_L
-  #IT2_FINAL_MEAN <- (IT2_W + IT2_L)/2
+  # IT2_W  <- ATK_W * GINI_SIMPSON_W * SGRIN_W
+  # IT2_L  <-   ATK_L * GINI_SIMPSON_L * SGRIN_L
+  # #IT2_FINAL_MEAN <- (IT2_W + IT2_L)/2
   ##############################################################################
-  #parameter D
-  D_W <- 0.5
-  D_L <- 0.5
-  
-  if (PROP_R_W == D_W) {
-    PROPSTATUS_W <- 0
-  } else {
-    PROPSTATUS_W <- 1 - PROP_R_W
-  }
-  
-  
-  if (PROP_R_L == D_L) {
-    PROPSTATUS_L <- 0
-  } else {
-    PROPSTATUS_L <- 1 - PROP_R_L
-  }
-  
-  IT3_W  <- ((((1 - PROPSP1R_W) * GINI_SIMPSON_W) + SGRIN_W) - PROPSTATUS_W) /
-    2
-  IT3_L  <- ((((1 - PROPSP1R_L) * GINI_SIMPSON_L) + SGRIN_L) - PROPSTATUS_L) /
-    2
-  if (IT3_L < 0) {
-    IT3_L <- 0
-  }
-  
-  if (IT3_W < 0) {
-    IT3_W <- 0
-  }
-  
+  # #parameter D
+  # D_W <- 0.5
+  # D_L <- 0.5
+  # 
+  # if (PROP_R_W == D_W) {
+  #   PROPSTATUS_W <- 0
+  # } else {
+  #   PROPSTATUS_W <- 1 - PROP_R_W
+  # }
+  # 
+  # 
+  # if (PROP_R_L == D_L) {
+  #   PROPSTATUS_L <- 0
+  # } else {
+  #   PROPSTATUS_L <- 1 - PROP_R_L
+  # }
+  # 
+  # IT3_W  <- ((((1 - PROPSP1R_W) * GINI_SIMPSON_W) + SGRIN_W) - PROPSTATUS_W) /
+  #   2
+  # IT3_L  <- ((((1 - PROPSP1R_L) * GINI_SIMPSON_L) + SGRIN_L) - PROPSTATUS_L) /
+  #   2
+  # if (IT3_L < 0) {
+  #   IT3_L <- 0
+  # }
+  # 
+  # if (IT3_W < 0) {
+  #   IT3_W <- 0
+  # }
+  # 
+  # 
+  # IT3_FINAL_MEAN <- (IT3_W + IT3_L) / 2
+  ##############################################################################
+  #NEW SCORE 
+  IT3_W  <- (GINI_SIMPSON_W +(PROPSP1R_W*ATK_W) + SGRIN_W)/3
+  IT3_L  <- (GINI_SIMPSON_L +(PROPSP1R_L*ATK_L) + SGRIN_L)/3
+  IT3_H  <- (GINI_SIMPSON_H +(PROPSP1R_H*ATK_H) + SGRIN_H)/3
   
   IT3_FINAL_MEAN <- (IT3_W + IT3_L) / 2
   ##############################################################################
-  
-  
-  TAX_DF <- data.frame(matrix(nrow = 3, ncol = 16))
+  TAX_DF <- data.frame(matrix(nrow = 3, ncol = 14))
   colnames(TAX_DF) <- c(
     "type",
     "nTaxa",
     "nRecords",
-    "nRecords_NA_ISO3",
-    "GRIN",
-    "WOF",
-    "PROP_RECORDS",
-    "PROP_Taxa",
-    "PROP_Taxa_onerecord",
+    "nRecords_NA",
+    "Records/Taxa",
+    "propTaxa_GRIN",
+    "propTaxa_WOF",
+    "propRecords",
+    "propTaxa_collection",
+    "propSingleton",
     "Gini_Simpson",
-    "PROPStatus_index3",
-    "Prop_Taxa_IUCN",
+    #"NA",#"PROPStatus_index3",
+    "propTaxa_IUCN",
     "1_Atkinson",
-    "Index_1",
-    "Index_2",
-    "Index_3"
+    #"Index_1",
+    #"Index_2",
+    "Composition_index"
   )
   
   #COLLECTION TYPES
@@ -987,67 +1019,72 @@ and good eveness (similar number of records)
   TAX_DF[1, 2] <- nrow(dist_prop[which(dist_prop$status == "wild"), ])
   TAX_DF[1, 3] <-  sum(dist_prop$ncounts_Country[which(dist_prop$status ==
                                                          "wild")])
-  TAX_DF[1, 4] <-  sum(dist_prop$ncounts_nonnaCountry_noNA[which(dist_prop$status ==
+  TAX_DF[1, 4] <-  sum(dist_prop$ncounts_NA[which(dist_prop$status ==
                                                                    "wild")])
-  TAX_DF[1, 5] <-  SGRIN_W
-  TAX_DF[1, 6] <-  SWOF_W
-  TAX_DF[1, 7] <-  PROP_R_W
-  TAX_DF[1, 8] <-  PROPSP_W
-  TAX_DF[1, 9] <-  PROPSP1R_W
-  TAX_DF[1, 10] <-  GINI_SIMPSON_W
-  TAX_DF[1, 11] <- PROPSTATUS_W
+  TAX_DF[1, 5] <-  TAX_DF[1, 3]/TAX_DF[1, 2] 
+  TAX_DF[1, 6] <-  SGRIN_W
+  TAX_DF[1, 7] <-  SWOF_W
+  TAX_DF[1, 8] <-  PROP_R_W
+  TAX_DF[1, 9] <-  PROPSP_W
+  TAX_DF[1, 10] <-  PROPSP1R_W
+  TAX_DF[1, 11] <-  GINI_SIMPSON_W
+  #TAX_DF[1, 11] <- #NA#PROPSTATUS_W
   TAX_DF[1, 12] <- PROP_W_IUCN
   TAX_DF[1, 13] <- ATK_W
-  TAX_DF[1, 14] <- IT1_W
-  TAX_DF[1, 15] <-  IT2_W
-  TAX_DF[1, 16] <-  IT3_W
+  #TAX_DF[1, 13] <- IT1_W
+  #TAX_DF[1, 14] <-  IT2_W
+  TAX_DF[1, 14] <-  IT3_W
   
   #LANDRACE
   TAX_DF[2, 2] <- nrow(dist_prop[which(dist_prop$status == "landrace"), ])
   TAX_DF[2, 3] <-  sum(dist_prop$ncounts_Country[which(dist_prop$status ==
                                                          "landrace")])
-  TAX_DF[2, 4] <-  sum(dist_prop$ncounts_nonnaCountry_noNA[which(dist_prop$status ==
+  TAX_DF[2, 4] <-  sum(dist_prop$ncounts_NA[which(dist_prop$status ==
                                                                    "landrace")])
-  TAX_DF[2, 5] <-  SGRIN_L
-  TAX_DF[2, 6] <-  SWOF_L
-  TAX_DF[2, 7] <-  PROP_R_L
-  TAX_DF[2, 8] <-  PROPSP_L
-  TAX_DF[2, 9] <-  PROPSP1R_L
-  TAX_DF[2, 10] <-  GINI_SIMPSON_L
-  TAX_DF[2, 11] <- PROPSTATUS_L
+  TAX_DF[2, 5] <-  TAX_DF[2, 3]/TAX_DF[2, 2] 
+  TAX_DF[2, 6] <-  SGRIN_L
+  TAX_DF[2, 7] <-  SWOF_L
+  TAX_DF[2, 8] <-  PROP_R_L
+  TAX_DF[2, 9] <-  PROPSP_L
+  TAX_DF[2, 10] <-  PROPSP1R_L
+  TAX_DF[2, 11] <-  GINI_SIMPSON_L
+  #TAX_DF[2, 11] <- NA#PROPSTATUS_L
   TAX_DF[2, 12] <-  PROP_L_IUCN
   TAX_DF[2, 13] <-  ATK_L
-  TAX_DF[2, 14] <- IT1_L
-  TAX_DF[2, 15] <-  IT2_L
-  TAX_DF[2, 16] <-  IT3_L
+  #TAX_DF[2, 13] <- IT1_L
+  #TAX_DF[2, 14] <-  IT2_L
+  TAX_DF[2, 14] <-  IT3_L
+  
+  
   # HYBRIDS
   TAX_DF[3, 2] <- nrow(dist_prop[which(dist_prop$status == "hybrid"), ])
   TAX_DF[3, 3] <-  sum(dist_prop$ncounts_Country[which(dist_prop$status ==
                                                          "hybrid")])
-  TAX_DF[3, 4] <-  sum(dist_prop$ncounts_nonnaCountry_noNA[which(dist_prop$status ==
+  TAX_DF[3, 4] <-  sum(dist_prop$ncounts_NA[which(dist_prop$status ==
                                                                    "hybrid")])
-  TAX_DF[3, 5] <-  SGRIN_H
-  TAX_DF[3, 6] <-  SWOF_H
-  TAX_DF[3, 7] <-  PROP_R_H
-  TAX_DF[3, 8] <-  PROPSP_H
-  TAX_DF[3, 9] <-  PROPSP1R_H
-  TAX_DF[3, 10] <-  GINI_SIMPSON_H
-  TAX_DF[3, 11] <- NA
+  TAX_DF[3, 5] <-  TAX_DF[3, 3]/TAX_DF[3, 2] 
+  TAX_DF[3, 6] <-  SGRIN_H
+  TAX_DF[3, 7] <-  SWOF_H
+  TAX_DF[3, 8] <-  PROP_R_H
+  TAX_DF[3, 9] <-  PROPSP_H
+  TAX_DF[3, 10] <-  PROPSP1R_H
+  TAX_DF[3, 11] <-  GINI_SIMPSON_H
+  #TAX_DF[3, 11] <- NA
   TAX_DF[3, 12] <-  NA
   TAX_DF[3, 13] <-  ATK_H
-  TAX_DF[3, 14] <- NA
-  TAX_DF[3, 15] <-  NA
-  TAX_DF[3, 16] <-  NA
+  #TAX_DF[3, 13] <- NA
+  #TAX_DF[3, 14] <-  NA
+  TAX_DF[3, 14] <-  NA
   
   
   
   write.csv(
     TAX_DF,
-    paste0(outdir, "/", collection_name, "_IT_table.csv"),
+    paste0(outdir, "/", collection_name, "/", collection_name, "_IT_table_1.csv"),
     row.names = F,
     na = ""
   )
-  message(paste0("Saved: ", outdir, "/", collection_name, "_IT_table.csv"))
+  message(paste0("Saved: ", outdir, "/", collection_name, "/", collection_name, "_IT_table_1.csv"))
   
   
   message("DONE!")
@@ -1111,7 +1148,7 @@ API <- "mtfcmg5AttZ2kaJSWdsq9MkEjfhW41gjeSvm"
 if(!exists("WFO.data")){
 WorldFlora::WFO.remember("D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO_Backbone.zip")
 }
-  #WorldFlora::WFO.remember(WFO.file = "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
+  #WorldFlora::WFO.remember(WFO.file = "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
 
 ################################################################################
 #CIAT codes= "beans"   "forages" "cassava"
