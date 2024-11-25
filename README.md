@@ -30,13 +30,15 @@ _______
 
 # Recommendations:
 > [!IMPORTANT]
-> (0_preprocessing.R ) and Ecogeography (2_Ecogeographic_index.R) are the slowiest steps in this pipeline. Be patient
-> Please provide the germplasm collection data in MCDP format. see (https://www.genesys-pgr.org/documentation/basics#mcpd)
-> The Geographical quality score, and taxonomic geographical score can be obtained from https://github.com/alliance-datascience/genebank-general/tree/dev
-> Only use accessions with high and medium geographical quality score to run the Ecogeography (2_Ecogeographic_index.R) step
-> If genetic data is not available please use the step Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
-> The ECADI must be interpreated using the four components together!
+> Please follow the next recommendations and instructions: 
+- (0_preprocessing.R ) and Ecogeography (2_Ecogeographic_index.R) are the slowiest steps in this pipeline. Be patient
+- Please provide the germplasm collection data in MCDP format. see (https://www.genesys-pgr.org/documentation/basics#mcpd)
+- The Geographical quality score, and taxonomic geographical score can be obtained from https://github.com/alliance-datascience/genebank-general/tree/dev
+- Only use accessions with high and medium geographical quality score to run the Ecogeography (2_Ecogeographic_index.R) step
+- If genetic data is not available please use the step Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
+- The ECADI must be interpreated using the four components together!
 
+_______
 A detailed explanation of each code is provided as follows:
 
 
