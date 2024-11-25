@@ -39,6 +39,7 @@ _______
 - The ECADI must be interpreated using the four components together!
 
 _______
+# Description of each step: 
 A detailed explanation of each code is provided as follows:
 
 
