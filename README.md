@@ -7,11 +7,6 @@ This repository consists of a set of functions to calculate a series of indicato
 - (iii) Documentation completeness
 - (iv) Genetics diversity and genetic usability information availability
  
-
-
-
-
-
 # Description:
 
 This code performs the following steps:
@@ -24,10 +19,9 @@ This code performs the following steps:
 
 A detailed explanation of each code is provided as follows:
 
+## Preprocessing (0_preprocessing.R )
 
-### Preprocessing (0_preprocessing.R )
-
-#### Inputs
+### Inputs
 > [!IMPORTANT]
 > Download GRIN information from https://npgsweb.ars-grin.gov/gringlobal/uploads/documents/taxonomy_data.cab
 
@@ -45,7 +39,7 @@ A detailed explanation of each code is provided as follows:
 
 > Add a key for IUCN API: Please obtain your API signing up here:https://api.iucnredlist.org/
 
-#### Steps done:
+### Steps done:
 - Filter by Crop wild relatives (CWR), landraces and hybrids. This step discard breeding materials!
 - Creating count matrices per CWR and landraces: rows are taxa and columns are countries (output 1)
 - Obtain taxonomic matching using GRIN taxonomy
@@ -55,7 +49,7 @@ A detailed explanation of each code is provided as follows:
 - Obtain biodiversity general metrics (Atkinson, Simpson, Margalef)  (output 3) 
 - Create a summary table with taxonomy status in GRIN and WorldFlora, and IUCN status (Main output)
 
-#### Outputs:
+### Outputs:
  -  Output 1: ["/", collection_name, "/", collection_name,"_count_matrix_countries_1.csv"]
  -  Output 2: ["/", collection_name, "/", collection_name, "_native_iso3_new_1.csv"]
  -  Output 3: ["/", collection_name, "/", collection_name, "_IT_table_1.csv"]
@@ -63,7 +57,7 @@ A detailed explanation of each code is provided as follows:
 
 
 
-### Ecogeography (2_Ecogeographic_index.R )
+## Ecogeography (2_Ecogeographic_index.R )
 > [!IMPORTANT]
 > Download OLSON (2001)
 
