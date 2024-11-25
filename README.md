@@ -53,7 +53,8 @@ A detailed explanation of each code is provided as follows:
 > WorldFlora Online input:
 > Download this file: https://files.worldfloraonline.org/files/WFO_Backbone/_WFOCompleteBackbone/WFO_Backbone.zip
 
-> Add a key for IUCN API: Please obtain your API signing up here:https://api.iucnredlist.org/
+ >[!IMPORTANT]
+> Add a key for IUCN API: Please obtain your API signing up here:https://api.iucnredlist.org/ (The IUCN query step is quite slow!)
 
 ### Steps done:
 - Filter by Crop wild relatives (CWR), landraces and hybrids. This step discard breeding materials!
