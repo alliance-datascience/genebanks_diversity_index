@@ -19,9 +19,16 @@ This code performs the following steps:
 
 A detailed explanation of each code is provided as follows:
 
+
 ## Preprocessing (0_preprocessing.R )
 
+### Share inputs for codes:
+- A path to save outputs: outdir
+- Collection name: The collection name used (e.g. "beans")
+  
 ### Inputs
+
+
 > [!IMPORTANT]
 > Download GRIN information from https://npgsweb.ars-grin.gov/gringlobal/uploads/documents/taxonomy_data.cab
 
@@ -140,11 +147,66 @@ A detailed explanation of each code is provided as follows:
 - Plotting using NIPALS for landraces and CWR (Output 2A or Output 2B) 
        
 ### Outputs:
- - Output 1: ["/", collection_name,"/", collection_name, "_4_genetics_summary_table.csv]
+- Output 1: ["/", collection_name,"/", collection_name, "_4_genetics_summary_table.csv]
 - Output 2: ["/", collection_name,"/", collection_name, "_4_GI_table.csv"]
 - Main output: ["/", collection_name,"/", collection_name, "_4_GI_country_table.csv]
- -  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"usability_land.png"] or  [ "/",  collection_name,"/", collection_name",_"usability_WILD.png"] 
+-  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"usability_land.png"] or  [ "/",  collection_name,"/", collection_name",_"usability_WILD.png"] 
+## Genetics diversity (When it is available!) (4_1_Genetics_distance)
 
+### Inputs
+> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+>  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
+- numCores = Cores number used to match information
+- An excel file with the genetic distance for the overall collection!  This matrix must have the same number of columns and rows! (gen_data)
+> Preprocessing Inputs:
+- Passport data for CWR, landrace, and hybrids respectively: (passport_data_w, passport_data_l, passport_data_h)
+
+### Steps done:
+- Call previous results using the RDS file from 0_preprocessing.R
+-   Checking if CWR, landraces, and hybrid datasets are available
+- Adding a flag in passport data to obtain what accessions were used for the genetic distance calculation in collection subsets
+- Sub setting genetic distances per collection subsets and calculating the genetic distance median per accession (Output 1)
+- Calculating the median of genetic distances per taxon and country in each collection subset (Main Output)
+       
+### Outputs:
+ - Output 1: ["/", collection_name,"/", collection_name, "_4_1_Genetic_distance_summary.csv"]
+- Main output: ["/", collection_name,"/", collection_name, "_4_1_Genetic_distance_country.csv"]
+
+
+## ECADI index calculation  (5_ECADI.R)
+
+### Inputs
+> [!IMPORTANT] This code uses the results per country calculated in steps 1 to 4.
+>  eco_file: the file with the ecogeographical index calculated in the 2_Ecogeographic_index.R file
+
+
+### Steps done:
+- Load the composition index: ["/", collection_name,"/", collection_name, "_composition_countries.csv"]
+-     Load the ecogeographical representativeness index from the eco_file
+- Load the documentation completeness index: ["/", collection_name,"/", collection_name, "_completeness_countries.csv"]
+- Load the usability index: ["/", collection_name,"/", collection_name, "_4_GI_country_table.csv"]
+- Load the genetic distance index file: ["/", collection_name,"/", collection_name, "_4_1_Genetic_distance_country.csv"]
+- Create a summary file using the composition index file as template 
+- Match the four indexes and countries for CWR and landraces
+- Calculate the ECADI as 
+```
+    sum(summary_file$C1_COMP_INDEX_[]_ENS[[i]] +
+          summary_file$C2_ECO_INDEX_[][[i]] +
+          summary_file$C3_DC_INDEX_[][[i]] +
+          summary_file$C4_USAB_INDEX_[][[i]],na.rm = T)/4
+```
+>[] represents either CWR or landraces
+
+-	Calculate ECADI for a collection as the average of ECADI (landraces) and ECADI (CWR)
+-	Save a CSV file (Main output) 
+-	-Obtaining regions using ISO3 information from count matrices
+-	-Plotting using NIPALS for landraces and CWR (Output 2A or Output 2B) 
+-	Plot indexes as Spider plot (Output 3)
+
+### Outputs:
+- Main output: ["/", collection_name,"/", collection_name, "_ECADI.CSV]
+- (Output 2A or Output 2B): [ "/",  collection_name, "/", collection_name,      "_",  "ECADI_WILD.png"]
+- Output3: ["/",  collection_name,  "/",   collection_name,  "_",  "ECADI_PLOT.png]
 
 
 
