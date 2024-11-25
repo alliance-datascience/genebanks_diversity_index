@@ -41,18 +41,18 @@ _______
 _______
 # How to run this code? This must be the order of running:
  ## 1) MANDATORY PREPROCESSING
- - [ ] (i) 0_preprocessing.R (MANDATORY) 
+ * [ ] (i) 0_preprocessing.R (MANDATORY) 
  ## 2) The following codes can be run regardless the order.
- - [ ] (ii) 1_Taxonomic_index_Country.R
- - [ ] (iii) 2_Ecogeographic_index.R
- - [ ] (iv) 3_completeness_index.R
- - [ ] (v) 4_Genetic_sequenced_coverage.R
+ * [ ] (ii) 1_Taxonomic_index_Country.R
+ * [ ] (iii) 2_Ecogeographic_index.R
+ * [ ] (iv) 3_completeness_index.R
+ * [ ] (v) 4_Genetic_sequenced_coverage.R
   
 > [!CAUTION]
 > If you have a distance matrix, please use 4_1_Genetics_distance.R. Nevertheless, this pipeline was designed to use 4_Genetic_sequenced_coverage.R!
 
 ## 3) MANDATORY SUMMARY STEP
- - [ ] (vi) 5_ECADI.R (MANDATORY)
+ * [ ] (vi) 5_ECADI.R (MANDATORY)
 
 
 _______
