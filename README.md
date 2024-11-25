@@ -74,11 +74,11 @@ A detailed explanation of each code is provided as follows:
 - Normalize ENS and Margalef using Sigmoid scaling *D is either ENS or Margalef
 - Calculating composition index as D*1-A in a summary file per country and collection subset (Main output)
 - Obtaining regions using ISO3 information from count matrices
-- Plotting using NIPALS for CWR and landraces (Ouput 2A or Output 2B) 
-        
+- Plotting using NIPALS for landraces and CWR (Output 2A or Output 2B)
+          
 ### Outputs:
  - Main output: ["/",   collection_name,"/",collection_name,"_composition_countries.csv"]
--  (Ouput 2A or Output 2B): [ "/",  collection_name,"/", collection_name, "_",plot_type,"_composition_LANDRACE.png"] or  ["/",collection_name,"/",collection_name, "_",plot_type,"_composition_WILD.png"]
+-  (Output 2A or Output 2B): [ "/",  collection_name,"/", collection_name, "_",plot_type,"_composition_LANDRACE.png"] or  ["/",collection_name,"/",collection_name, "_",plot_type,"_composition_WILD.png"]
 >plot_type refers to what kind of biodiversity index (“simpson”,”margalef”) for ENS or Margalef.
 
 
@@ -106,13 +106,44 @@ A detailed explanation of each code is provided as follows:
 - Obtaining summarizing metrics (mean, sd) for PDCI, GQS, and TQS and standardize to obtain values from 0 to 1 for the three quality data metrics
 - Obtaining indicator per country as the geometric mean of species per country and collection subset (Main output) 
 - Obtaining regions using ISO3 information from count matrices
-- Plotting using NIPALS for CWR and landraces (Output 2A or Output 2B) 
+- Plotting using NIPALS for landraces and CWR (Output 2A or Output 2B) 
         
 ### Outputs:
  - Main output: ["/",   collection_name,"/",collection_name,"_completeness_countries.csv"]
--  [ "/",  collection_name,"/", collection_name",_"completeness_LANDRACE.png"] or  [ "/",  collection_name,"/", collection_name",_"completeness_WILD.png"] 
+ -  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"completeness_LANDRACE.png"] or  [ "/",  collection_name,"/", collection_name",_"completeness_WILD.png"] 
 
 
+
+## Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage)
+
+### Inputs
+> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+>  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
+- numCores = Cores number used to match information
+- An excel file with the accessions sequenced. The information reported is the accession number (accessions_df)
+> Preprocessing Inputs:
+ - Summary table with taxonomy status in GRIN and WorldFlora, and IUCN status ["/", collection_name,"/", collection_name,  "_summary_table.csv"]
+- Passport data for CWR, landrace, and hybrids respectively: (passport_data_w, passport_data_l, passport_data_h)
+
+### Steps done:
+- Call previous results using the RDS file from 0_preprocessing.R
+-   Checking if CWR, landraces, and hybrid datasets are available
+- Adding a flag in passport data to obtain what accessions were sequenced in collection subsets
+- Using information from summary table to obtain IUCN threatened species in collection subsets and country using the following categories:  "Vulnerable”, “Endangered”, “Critically Endangered”, “Extinct in the Wild". This metric is IUCN threathed/total taxa in the subset.
+- Obtaining summarizing metrics per country for proportion of records sequenced (pRseq) and proportion of taxa sequenced (pTseq) per each collection subset
+- Obtaining usability index as the average of pRseq, pTseq, and IUCN.
+>[Note] The metrics for the collection subsets is a weighted mean considering the number of records in a total collection (CWR, landraces, and hybrids).
+- Save a summary table of the subset collection including taxa proportions: (Output 1) 
+- A general summary table for collection subsets (Output 2)
+- Obtaining regions using ISO3 information from count matrices
+- Obtaining indicator per country and collection per country and collection subset (Main output) 
+- Plotting using NIPALS for landraces and CWR (Output 2A or Output 2B) 
+       
+### Outputs:
+ - Output 1: ["/", collection_name,"/", collection_name, "_4_genetics_summary_table.csv]
+- Output 2: ["/", collection_name,"/", collection_name, "_4_GI_table.csv"]
+- Main output: ["/", collection_name,"/", collection_name, "_4_GI_country_table.csv]
+ -  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"usability_land.png"] or  [ "/",  collection_name,"/", collection_name",_"usability_WILD.png"] 
 
 
 
