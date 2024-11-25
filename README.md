@@ -74,7 +74,8 @@ A detailed explanation of each code is provided as follows:
 ## Preprocessing (1_Taxonomic_index_Country.R)
 
 ### Inputs
-> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+> [!IMPORTANT]
+> This code uses the RDS calculated in the preprocessing step 
 >  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
 > Preprocessing Inputs:
  - Summary table with taxonomy status in GRIN and WorldFlora, and IUCN status - geography.txt (geographical information for taxa)
@@ -135,7 +136,8 @@ A detailed explanation of each code is provided as follows:
 ## Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage)
 
 ### Inputs
-> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+> [!IMPORTANT]
+> This code uses the RDS calculated in the preprocessing step 
 >  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
 - numCores = Cores number used to match information
 - An excel file with the accessions sequenced. The information reported is the accession number (accessions_df)
@@ -150,7 +152,8 @@ A detailed explanation of each code is provided as follows:
 - Using information from summary table to obtain IUCN threatened species in collection subsets and country using the following categories:  "Vulnerable”, “Endangered”, “Critically Endangered”, “Extinct in the Wild". This metric is IUCN threathed/total taxa in the subset.
 - Obtaining summarizing metrics per country for proportion of records sequenced (pRseq) and proportion of taxa sequenced (pTseq) per each collection subset
 - Obtaining usability index as the average of pRseq, pTseq, and IUCN.
->[Note] The metrics for the collection subsets is a weighted mean considering the number of records in a total collection (CWR, landraces, and hybrids).
+>[Note]
+> The metrics for the collection subsets is a weighted mean considering the number of records in a total collection (CWR, landraces, and hybrids).
 - Save a summary table of the subset collection including taxa proportions: (Output 1) 
 - A general summary table for collection subsets (Output 2)
 - Obtaining regions using ISO3 information from count matrices
@@ -165,7 +168,8 @@ A detailed explanation of each code is provided as follows:
 ## Genetics diversity (When it is available!) (4_1_Genetics_distance)
 
 ### Inputs
-> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+> [!IMPORTANT]
+> This code uses the RDS calculated in the preprocessing step 
 >  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
 - numCores = Cores number used to match information
 - An excel file with the genetic distance for the overall collection!  This matrix must have the same number of columns and rows! (gen_data)
@@ -187,7 +191,8 @@ A detailed explanation of each code is provided as follows:
 ## ECADI index calculation  (5_ECADI.R)
 
 ### Inputs
-> [!IMPORTANT] This code uses the results per country calculated in steps 1 to 4.
+> [!IMPORTANT]
+> This code uses the results per country calculated in steps 1 to 4.
 >  eco_file: the file with the ecogeographical index calculated in the 2_Ecogeographic_index.R file
 
 
