@@ -39,7 +39,7 @@ _______
 - The ECADI must be interpreted using the four components together!
   
 _______
-# How to run this code? This must the order of running:
+# How to run this code? This must be the order of running:
  ## 1) MANDATORY PREPROCESSING
  - (i) 0_preprocessing.R (MANDATORY)
  ## 2) The following codes can be run regardless the order.
