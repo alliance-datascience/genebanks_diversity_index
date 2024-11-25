@@ -114,6 +114,20 @@ A detailed explanation of each code is provided as follows:
  -  Output 3: ["/", collection_name, "/", collection_name, "_IT_table_1.csv"]
  -  Main output:  ["/", collection_name, "/", collection_name, "_summary_table.csv"]
 
+
+```r
+passport_data_orig <- passport_data_original[which(passport_data_original$CROPCODE =="beans"), ]
+collection_name = "beans"
+x2 <- index_function(
+  passport_data_orig = passport_data_orig,
+  tax = tax,
+  geo = geo,
+  tax_geo = tax_geo,
+  outdir = outdir,
+  API = API,
+  collection_name = collection_name)
+```
+
 ## 1. Collection composition and taxonomy (1_Taxonomic_index_Country.R)
 
 ### Inputs
@@ -142,16 +156,15 @@ A detailed explanation of each code is provided as follows:
 >plot_type refers to what kind of biodiversity index (“simpson”,”margalef”) for ENS or Margalef.
 
 ```r
-collection_name <- "beans"
-PCDI_df_beans <- PCDI_df[which(PCDI_df$CROPNAME==collection_name),]
-QGI_df_beans <- QGI_df[which(QGI_df$CROPNAME==collection_name),]
-TQI_df_beans <- TQI_df[which(TQI_df$CROPNAME==collection_name),]
-x1 <-completeness_func(outdir = outdir,
-                       collection_name = collection_name,
-                       PCDI_df = PCDI_df_beans,
-                       QGI_df = QGI_df_beans,
-                       TQI_df =TQI_df_beans)
-)
+  collection_name <- "beans"
+#Plotting NIPALS using Margalef 
+  x2 <- composition_country(outdir = outdir,
+                            collection_name = collection_name,
+                            plot_type="Margalef")
+#Plotting NIPALS using ENS 
+  x2 <- composition_country(outdir = outdir,
+                            collection_name = collection_name,
+                            plot_type="Simpson")
 ```
 
 ## 2. Ecogeography (2_Ecogeographic_index.R )
