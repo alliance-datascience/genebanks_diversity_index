@@ -10,7 +10,12 @@ This repository consists of a set of functions to calculate a series of indicato
 _______
 _______
 _______
+**Dependencies:** `R (>= 4.4.1)`
 
+**Imports:** `base, utils, methods, stats, ggplot2, DescTools, parallel, stringr, WorldFlora, plsdepot, ggrepel, ggradar, countrycode, sf, raster, factoextra, terra, data.table, glue, fossil, dplyr, vegan, abdiv, DescTools`
+
+_______
+_______
 
 # Description:
 
