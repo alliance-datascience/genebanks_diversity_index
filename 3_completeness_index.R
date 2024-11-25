@@ -46,12 +46,30 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
     passport_data_w$TQI <- NA
     for(i in 1:nrow(passport_data_w)){
       #i <- 1
-      passport_data_w$PDCI[[i]] <- PCDI_df$PDCI_final[
+      x <- PCDI_df$PDCI_final[
         which(PCDI_df$ACCENUMB==passport_data_w$ACCENUMB[[i]])]
+      if(length(x)>0){
+        passport_data_w$PDCI[[i]] <- PCDI_df$PDCI_final[
+          which(PCDI_df$ACCENUMB==passport_data_w$ACCENUMB[[i]])]
+      } else {
+        passport_data_w$PDCI[[i]] <- NA
+      };rm(x)
+      x <- QGI_df$SCORE[
+        which(QGI_df$ACCENUMB==passport_data_w$ACCENUMB[[i]])]
+      if(length(x)>0){
       passport_data_w$GQI[[i]] <- QGI_df$SCORE[
         which(QGI_df$ACCENUMB==passport_data_w$ACCENUMB[[i]])]
+      } else {
+        passport_data_w$GQI[[i]] <- NA
+      };rm(x)
+      x <- TQI_df$TAXA_SCORE_VALUE[
+        which(TQI_df$ACCENUMB==passport_data_w$ACCENUMB[[i]])]
+      if(length(x)>0){
       passport_data_w$TQI[[i]] <- TQI_df$TAXA_SCORE_VALUE[
         which(TQI_df$ACCENUMB==passport_data_w$ACCENUMB[[i]])]
+      } else {
+        passport_data_w$TQI[[i]] <- NA
+      };rm(x)
     };rm(i)
   } else {
     warning("NO WILD DATA AVAILABLE")
@@ -65,12 +83,31 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
     passport_data_l$TQI <- NA
     for(i in 1:nrow(passport_data_l)){
       #i <- 1
-      passport_data_l$PDCI[[i]] <- PCDI_df$PDCI_final[
+      x <- PCDI_df$PDCI_final[
         which(PCDI_df$ACCENUMB==passport_data_l$ACCENUMB[[i]])]
-      passport_data_l$GQI[[i]] <- QGI_df$SCORE[
+      if(length(x)>0){
+        passport_data_l$PDCI[[i]] <- PCDI_df$PDCI_final[
+          which(PCDI_df$ACCENUMB==passport_data_l$ACCENUMB[[i]])]
+      } else {
+        passport_data_l$PDCI[[i]] <- NA
+      };rm(x)
+      x <- QGI_df$SCORE[
         which(QGI_df$ACCENUMB==passport_data_l$ACCENUMB[[i]])]
-      passport_data_l$TQI[[i]] <-TQI_df$TAXA_SCORE_VALUE[
+      
+      if(length(x)>0){
+        passport_data_l$GQI[[i]] <- QGI_df$SCORE[
+        which(QGI_df$ACCENUMB==passport_data_l$ACCENUMB[[i]])]
+      } else {
+        passport_data_l$GQI[[i]] <- NA
+      };rm(x)
+      x <- TQI_df$TAXA_SCORE_VALUE[
         which(TQI_df$ACCENUMB==passport_data_l$ACCENUMB[[i]])]
+      if(length(x)>0){
+      passport_data_l$TQI[[i]] <- TQI_df$TAXA_SCORE_VALUE[
+        which(TQI_df$ACCENUMB==passport_data_l$ACCENUMB[[i]])]
+      } else {
+        passport_data_l$TQI[[i]] <- NA
+      };rm(x)
     };rm(i)
   } else {
     warning("NO LANDRACE DATA AVAILABLE")
@@ -84,12 +121,31 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
     passport_data_h$TQI <- NA
     for(i in 1:nrow(passport_data_h)){
       #i <- 1
-      passport_data_h$PDCI[[i]] <- PCDI_df$PDCI_final[
+      x <- PCDI_df$PDCI_final[
         which(PCDI_df$ACCENUMB==passport_data_h$ACCENUMB[[i]])]
-      passport_data_h$GQI[[i]] <- QGI_df$SCORE[
+      if(length(x)>0){
+        passport_data_h$PDCI[[i]] <- PCDI_df$PDCI_final[
+          which(PCDI_df$ACCENUMB==passport_data_h$ACCENUMB[[i]])]
+      } else {
+        passport_data_h$PDCI[[i]] <- NA
+      };rm(x)
+      x <- QGI_df$SCORE[
         which(QGI_df$ACCENUMB==passport_data_h$ACCENUMB[[i]])]
-      passport_data_h$TQI[[i]] <- TQI_df$TAXA_SCORE_VALUE[
+      if(length(x)>0){
+        passport_data_h$GQI[[i]] <- QGI_df$SCORE[
+          which(QGI_df$ACCENUMB==passport_data_h$ACCENUMB[[i]])]
+      } else {
+        passport_data_h$GQI[[i]] <- NA
+      };rm(x)
+      x <- TQI_df$TAXA_SCORE_VALUE[
         which(TQI_df$ACCENUMB==passport_data_h$ACCENUMB[[i]])]
+      if(length(x)>0){
+        passport_data_h$TQI[[i]] <- TQI_df$TAXA_SCORE_VALUE[
+          which(TQI_df$ACCENUMB==passport_data_h$ACCENUMB[[i]])]
+      } else {
+        passport_data_h$TQI[[i]] <- NA
+      };rm(x)
+
     };rm(i)
   } else {
     warning("NO HYBRID DATA AVAILABLE")
@@ -224,7 +280,7 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
   } else {
     PDCI_wild_W <- NA
     GQI_wild_W <- NA
-    GQI_wild_W <- NA
+    TQI_wild_W <- NA
   }
   ###############################
   #Doing weigthed mean using records proportion in the collection (landraces)
@@ -244,7 +300,7 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
   } else {
     PDCI_land_W <- NA
     GQI_land_W <- NA
-    GQI_land_W <- NA
+    TQI_land_W <- NA
   }
   ###############################
   #Doing weigthed mean using records proportion in the collection (hybrids)
@@ -316,7 +372,18 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
   
   df_completeness_final$final_score <- NA
   df_completeness_final$final_score <- 
-    df_completeness_final$PDCI*df_completeness_final$GQI*df_completeness_final$TQI
+    
+    unlist(lapply(1:nrow(df_completeness_final), function(i){
+      
+      x <- exp(mean(log(c(df_completeness_final$PDCI[[i]],
+                          df_completeness_final$GQI[[i]],
+                          df_completeness_final$TQI[[i]]))))
+      return(x)
+    }))
+  
+  
+    #exp(mean(log(c(df_completeness_final$PDCI,df_completeness_final$GQI,df_completeness_final$TQI))))
+    #df_completeness_final$PDCI*df_completeness_final$GQI*df_completeness_final$TQI
   ################################################################################
   ################################################################################
   ################################################################################
@@ -605,15 +672,40 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
   ################################################################################
   #COMPLETENESS score per country
   message("Calculating completeness index per country")
-  completeness_country_final$SCORE_wild <-  
-    completeness_country_final$PDCI_wild * completeness_country_final$GQI_wild *
-    completeness_country_final$TQI_wild
+  completeness_country_final$SCORE_wild <- 
+    
+    unlist(lapply(1:nrow(completeness_country_final), function(i){
+      
+      x <- exp(mean(log(c(completeness_country_final$PDCI_wild[[i]],
+                           completeness_country_final$GQI_wild[[i]],
+                           completeness_country_final$TQI_wild[[i]]))))
+      return(x)
+    }))
+
+    #completeness_country_final$PDCI_wild * completeness_country_final$GQI_wild *
+    #completeness_country_final$TQI_wild
   completeness_country_final$SCORE_landrace <- 
-    completeness_country_final$PDCI_landrace * completeness_country_final$GQI_landrace *
-    completeness_country_final$TQI_landrace
+    unlist(lapply(1:nrow(completeness_country_final), function(i){
+      
+      x <- exp(mean(log(c(completeness_country_final$PDCI_landrace[[i]],
+                          completeness_country_final$GQI_landrace[[i]],
+                          completeness_country_final$TQI_landrace[[i]]))))
+      return(x)
+    }))
+    
+
+   # completeness_country_final$PDCI_landrace * completeness_country_final$GQI_landrace *
+   # completeness_country_final$TQI_landrace
   completeness_country_final$SCORE_hybrid <- 
-    completeness_country_final$PDCI_hybrid * completeness_country_final$GQI_hybrid *
-    completeness_country_final$TQI_hybrid
+    
+    unlist(lapply(1:nrow(completeness_country_final), function(i){
+      
+      x <- exp(mean(log(c(completeness_country_final$PDCI_hybrid[[i]],
+                          completeness_country_final$GQI_hybrid[[i]],
+                          completeness_country_final$TQI_hybrid[[i]]))))
+      return(x)
+    }))
+
   ################################################################################
   #creating regions for plots
   completeness_country_final$REGION <- NA
@@ -679,6 +771,7 @@ completeness_func <- function(outdir,collection_name,PCDI_df,QGI_df,TQI_df){
   x_res_L <- x_res_L[complete.cases(x_res_L), ]
   x_res_L$REGION <- factor(x_res_L$REGION)
   ################################################################################
+  set.seed(1000)
   ################################################################################
   #plots
   message("Plotting crop wild relatives NIPALS")

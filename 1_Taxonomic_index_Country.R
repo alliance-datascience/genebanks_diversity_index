@@ -8,6 +8,22 @@
   library(ggrepel)
   library(MetBrewer)
   ################################################################################
+  # Define a function for decimal scaling 
+  decimal_scale <- function(x) { 
+    # Find the maximum absolute value of x 
+    max_abs <- max(abs(x),na.rm = T) 
+    # Find the smallest power of 10 that is equal to or larger than max_abs 
+    power <- ceiling(log10(max_abs))
+    # Divide x by 10^power 
+    x <- x/ (10^power)
+    return(x)
+  }
+  
+  ################################################################################
+  sigmoid_scale <- function(x){
+    x <- 1/(1+exp((-(x - mean(x,na.rm = T)))/sd(x,na.rm = T)))
+    return(x)
+  }
   ################################################################################
   
   composition_country <- function(outdir, collection_name,plot_type) {
@@ -133,7 +149,7 @@
       ############################################################################
       #"using wild data" (Gini Simpson, 1- Atkinson, singletons)
       if(nrow(distw)>0){
-        SIMP_WILD = abdiv::simpson(df_wild[, i])
+        SIMP_WILD = abdiv::dominance(df_wild[, i])
         ATK_WILD = 1-DescTools::Atkinson(df_wild[, i],parameter = 0.5)
         SP1_WILD = length(df_wild[, i][which(df_wild[, i] == 1)])
         PROP_1_SP1_WILD = 1 - (length(df_wild[, i][which(df_wild[, i] ==
@@ -161,7 +177,7 @@
       ############################################################################
       #"using landraces data" (Gini Simpson, 1- Atkinson, singletons)
       if(nrow(distl)>0){
-        SIMP_LAND = abdiv::simpson(df_landrace[, i])
+        SIMP_LAND = abdiv::dominance(df_landrace[, i])
         ATK_LAND = 1-DescTools::Atkinson(df_landrace[, i],parameter = 0.5)
         SP1_LAND = length(df_landrace[, i][which(df_landrace[, i] == 1)])
         PROP_1_SP1_LAND = 1 - (length(df_landrace[, i][which(df_landrace[, i] ==
@@ -190,7 +206,7 @@
       ############################################################################
       #"using hybrids data" (Gini Simpson, 1- Atkinson, singletons)
       if(nrow(disth)>0){
-        SIMP_HYBD = abdiv::simpson(df_hybrid[, i])
+        SIMP_HYBD = abdiv::dominance(df_hybrid[, i])
         ATK_HYBD = 1-DescTools::Atkinson(df_hybrid[, i],parameter = 0.5)
         SP1_HYBD = length(df_hybrid[, i][which(df_hybrid[, i] == 1)])
         PROP_1_SP1_HYBD = 1 - (length(df_hybrid[, i][which(df_hybrid[, i] ==
@@ -335,18 +351,18 @@
     simp_list$ACE_HYBD <- unlist(ACE_h_list)
     ################################################################################
     #calculating index 1 considering Gini Simpson, 1-Atkinson, and Singleton
-    simp_list$COMP_INDEX_W <- (
-      simp_list$SIMP_WILD + (simp_list$ATK_WILD * simp_list$PROP_1_SP1_WILD) +
-        simp_list$GRIN_TAXA_PROP_W
-    ) / 3
-    simp_list$COMP_INDEX_L <- (
-      simp_list$SIMP_LAND + (simp_list$ATK_LAND * simp_list$PROP_1_SP1_LAND) +
-        simp_list$GRIN_TAXA_PROP_L
-    ) / 3
-    simp_list$COMP_INDEX_H <- (
-      simp_list$SIMP_HYBD + (simp_list$ATK_HYBD * simp_list$PROP_1_SP1_HYBD) +
-        simp_list$GRIN_TAXA_PROP_H
-    ) / 3
+    # simp_list$COMP_INDEX_W <- (
+    #   simp_list$SIMP_WILD + (simp_list$ATK_WILD * simp_list$PROP_1_SP1_WILD) +
+    #     simp_list$GRIN_TAXA_PROP_W
+    # ) / 3
+    # simp_list$COMP_INDEX_L <- (
+    #   simp_list$SIMP_LAND + (simp_list$ATK_LAND * simp_list$PROP_1_SP1_LAND) +
+    #     simp_list$GRIN_TAXA_PROP_L
+    # ) / 3
+    # simp_list$COMP_INDEX_H <- (
+    #   simp_list$SIMP_HYBD + (simp_list$ATK_HYBD * simp_list$PROP_1_SP1_HYBD) +
+    #     simp_list$GRIN_TAXA_PROP_H
+    # ) / 3
     ################################################################################
     message("Adding collection data")
     simp_list[(nrow(simp_list) + 1), "COUNTRY"] <- "Subset"
@@ -375,10 +391,10 @@
     simp_list[(nrow(simp_list)), "GRIN_TAXA_PROP_L"]   <- TAX_DF$propTaxa_GRIN[2]
     simp_list[(nrow(simp_list)), "GRIN_TAXA_PROP_H"]    <- TAX_DF$propTaxa_GRIN[3]
     
-    simp_list[(nrow(simp_list)), "COMP_INDEX_W"]    <- NA#TAX_DF$Composition_index[1]
-    simp_list[(nrow(simp_list)), "COMP_INDEX_L"]    <- NA#TAX_DF$Composition_index[2]
-    simp_list[(nrow(simp_list)), "COMP_INDEX_H"]    <- NA#TAX_DF$Composition_index[3]
-    
+    # simp_list[(nrow(simp_list)), "COMP_INDEX_W"]    <- NA#TAX_DF$Composition_index[1]
+    # simp_list[(nrow(simp_list)), "COMP_INDEX_L"]    <- NA#TAX_DF$Composition_index[2]
+    # simp_list[(nrow(simp_list)), "COMP_INDEX_H"]    <- NA#TAX_DF$Composition_index[3]
+    # 
     simp_list[(nrow(simp_list)), "PROP_SPP_WILD"]    <- TAX_DF$propTaxa_collection[1]
     simp_list[(nrow(simp_list)), "PROP_SPP_LAND"]    <- TAX_DF$propTaxa_collection[2]
     simp_list[(nrow(simp_list)), "PROP_SPP_HYBD"]    <- TAX_DF$propTaxa_collection[3]
@@ -511,48 +527,79 @@
     }
     
     ################################################################################
-    message("Normalizing ACE using min_max method")
+    message("Normalizing ACE")
     #https://medium.com/@noorfatimaafzalbutt/a-comprehensive-guide-to-normalization-in-machine-learning-afead759b062
-    simp_list$ACE_WILD_S <- (simp_list$ACE_WILD - min(simp_list$ACE_WILD,na.rm = T))/
-      (max(simp_list$ACE_WILD,na.rm = T)-min(simp_list$ACE_WILD,na.rm = T))
-    #simp_list$ENS_GINI_WILD/abs(max(simp_list$ENS_GINI_WILD,na.rm = T))
-    #(simp_list$ENS_GINI_WILD - median(simp_list$ENS_GINI_WILD,na.rm = T))/IQR(simp_list$ENS_GINI_WILD,na.rm = T)
-    simp_list$ACE_LAND_S <- (simp_list$ACE_LAND - min(simp_list$ACE_LAND,na.rm = T))/
-      (max(simp_list$ACE_LAND,na.rm = T)-min(simp_list$ACE_LAND,na.rm = T))
-    #simp_list$ENS_GINI_LAND/abs(max(simp_list$ENS_GINI_LAND,na.rm = T))
-    #(simp_list$ENS_GINI_LAND - median(simp_list$ENS_GINI_LAND,na.rm = T))/IQR(simp_list$ENS_GINI_LAND,na.rm = T)
-    simp_list$ACE_HYBD_S <- (simp_list$ACE_HYBD - min(simp_list$ACE_HYBD,na.rm = T))/
-      (max(simp_list$ACE_HYBD,na.rm = T)-min(simp_list$ACE_HYBD,na.rm = T))
-    #simp_list$ENS_GINI_HYBD/abs(max(simp_list$ENS_GINI_HYBD,na.rm = T))
-    #(simp_list$ENS_GINI_HYBD - median(simp_list$ENS_GINI_HYBD,na.rm = T))/IQR(simp_list$ENS_GINI_HYBD,na.rm = T)
+    simp_list$ACE_WILD_S <- 
+      decimal_scale(simp_list$ACE_WILD)
+      #(simp_list$ACE_WILD - min(simp_list$ACE_WILD,na.rm = T))/
+      #(max(simp_list$ACE_WILD,na.rm = T)-min(simp_list$ACE_WILD,na.rm = T))
+
+    simp_list$ACE_LAND_S <- 
+      decimal_scale(simp_list$ACE_LAND)
+      #(simp_list$ACE_LAND - min(simp_list$ACE_LAND,na.rm = T))/
+      #(max(simp_list$ACE_LAND,na.rm = T)-min(simp_list$ACE_LAND,na.rm = T))
+
+    
+    simp_list$ACE_HYBD_S <- 
+      decimal_scale(simp_list$ACE_HYBD)
+      #(simp_list$ACE_HYBD - min(simp_list$ACE_HYBD,na.rm = T))/
+      #(max(simp_list$ACE_HYBD,na.rm = T)-min(simp_list$ACE_HYBD,na.rm = T))
     ################################################################################
-    message("Normalizing ENS (Simpson) using min_max method")
-    simp_list$ENS_GINI_WILD_S <- (simp_list$ENS_GINI_WILD - min(simp_list$ENS_GINI_WILD,na.rm = T))/
-      (max(simp_list$ENS_GINI_WILD,na.rm = T)-min(simp_list$ENS_GINI_WILD,na.rm = T))
-    #simp_list$ENS_GINI_WILD/abs(max(simp_list$ENS_GINI_WILD,na.rm = T))
-    #(simp_list$ENS_GINI_WILD - median(simp_list$ENS_GINI_WILD,na.rm = T))/IQR(simp_list$ENS_GINI_WILD,na.rm = T)
-    simp_list$ENS_GINI_LAND_S <- (simp_list$ENS_GINI_LAND - min(simp_list$ENS_GINI_LAND,na.rm = T))/
-      (max(simp_list$ENS_GINI_LAND,na.rm = T)-min(simp_list$ENS_GINI_LAND,na.rm = T))
-    #simp_list$ENS_GINI_LAND/abs(max(simp_list$ENS_GINI_LAND,na.rm = T))
-    #(simp_list$ENS_GINI_LAND - median(simp_list$ENS_GINI_LAND,na.rm = T))/IQR(simp_list$ENS_GINI_LAND,na.rm = T)
-    simp_list$ENS_GINI_HYBD_S <- (simp_list$ENS_GINI_HYBD - min(simp_list$ENS_GINI_HYBD,na.rm = T))/
-      (max(simp_list$ENS_GINI_HYBD,na.rm = T)-min(simp_list$ENS_GINI_HYBD,na.rm = T))
-    #simp_list$ENS_GINI_HYBD/abs(max(simp_list$ENS_GINI_HYBD,na.rm = T))
-    #(simp_list$ENS_GINI_HYBD - median(simp_list$ENS_GINI_HYBD,na.rm = T))/IQR(simp_list$ENS_GINI_HYBD,na.rm = T)
+    message("Normalizing ENS (Simpson)")
+    #https://abagen.readthedocs.io/en/stable/user_guide/normalization.html#usage-norm-zscore
+    
+    
+    
+    simp_list$ENS_GINI_WILD_S <- 
+    sigmoid_scale(simp_list$ENS_GINI_WILD)
+      
+
+  
+   #(median(simp_list$ENS_GINI_WILD,na.rm = T)-simp_list$ENS_GINI_WILD)/
+    #mad(simp_list$ENS_GINI_WILD,na.rm = T)
+      #decimal_scale(simp_list$ENS_GINI_WILD)
+     #(simp_list$ENS_GINI_WILD - min(simp_list$ENS_GINI_WILD,na.rm = T))/
+     #(max(simp_list$ENS_GINI_WILD,na.rm = T)-min(simp_list$ENS_GINI_WILD,na.rm = T))
+    
+    simp_list$ENS_GINI_LAND_S <- 
+      sigmoid_scale(simp_list$ENS_GINI_LAND)
+      #decimal_scale(simp_list$ENS_GINI_LAND)
+      #(median(simp_list$ENS_GINI_LAND,na.rm = T)-simp_list$ENS_GINI_LAND)/
+      #mad(simp_list$ENS_GINI_LAND,na.rm = T)
+      #(simp_list$ENS_GINI_LAND - min(simp_list$ENS_GINI_LAND,na.rm = T))/
+      #(max(simp_list$ENS_GINI_LAND,na.rm = T)-min(simp_list$ENS_GINI_LAND,na.rm = T))
+    
+    simp_list$ENS_GINI_HYBD_S <- 
+      sigmoid_scale(simp_list$ENS_GINI_HYBD)
+     #  (median(simp_list$ENS_GINI_HYBD,na.rm = T)-simp_list$ENS_GINI_HYBD)/
+     #  mad(simp_list$ENS_GINI_HYBD,na.rm = T)
+     # # decimal_scale(simp_list$ENS_GINI_HYBD)
+    
+      #(simp_list$ENS_GINI_HYBD - min(simp_list$ENS_GINI_HYBD,na.rm = T))/
+      #(max(simp_list$ENS_GINI_HYBD,na.rm = T)-min(simp_list$ENS_GINI_HYBD,na.rm = T))
+    
     ################################################################################
-    message("Normalizing MARGALEF using min_max method")
-    simp_list$MARGALEF_WILD_S <- (simp_list$MARGALEF_WILD - min(simp_list$MARGALEF_WILD,na.rm = T))/
-      (max(simp_list$MARGALEF_WILD,na.rm = T)-min(simp_list$MARGALEF_WILD,na.rm = T))
-    #simp_list$ENS_GINI_WILD/abs(max(simp_list$ENS_GINI_WILD,na.rm = T))
-    #(simp_list$ENS_GINI_WILD - median(simp_list$ENS_GINI_WILD,na.rm = T))/IQR(simp_list$ENS_GINI_WILD,na.rm = T)
-    simp_list$MARGALEF_LAND_S <- (simp_list$MARGALEF_LAND - min(simp_list$MARGALEF_LAND,na.rm = T))/
-      (max(simp_list$MARGALEF_LAND,na.rm = T)-min(simp_list$MARGALEF_LAND,na.rm = T))
-    #simp_list$ENS_GINI_LAND/abs(max(simp_list$ENS_GINI_LAND,na.rm = T))
-    #(simp_list$ENS_GINI_LAND - median(simp_list$ENS_GINI_LAND,na.rm = T))/IQR(simp_list$ENS_GINI_LAND,na.rm = T)
-    simp_list$MARGALEF_HYBD_S <- (simp_list$MARGALEF_HYBD - min(simp_list$MARGALEF_HYBD,na.rm = T))/
-      (max(simp_list$MARGALEF_HYBD,na.rm = T)-min(simp_list$MARGALEF_HYBD,na.rm = T))
-    #simp_list$ENS_GINI_HYBD/abs(max(simp_list$ENS_GINI_HYBD,na.rm = T))
-    #(simp_list$ENS_GINI_HYBD - median(simp_list$ENS_GINI_HYBD,na.rm = T))/IQR(simp_list$ENS_GINI_HYBD,na.rm = T)
+    message("Normalizing MARGALEF")
+    
+    simp_list$MARGALEF_WILD_S <- 
+      sigmoid_scale(simp_list$MARGALEF_WILD)
+    
+      #decimal_scale(simp_list$MARGALEF_WILD)
+      #(simp_list$MARGALEF_WILD - min(simp_list$MARGALEF_WILD,na.rm = T))/
+      #(max(simp_list$MARGALEF_WILD,na.rm = T)-min(simp_list$MARGALEF_WILD,na.rm = T))
+    
+    simp_list$MARGALEF_LAND_S <- 
+      sigmoid_scale(simp_list$MARGALEF_LAND)
+    
+      #decimal_scale(simp_list$MARGALEF_LAND)
+      #(simp_list$MARGALEF_LAND - min(simp_list$MARGALEF_LAND,na.rm = T))/
+      #(max(simp_list$MARGALEF_LAND,na.rm = T)-min(simp_list$MARGALEF_LAND,na.rm = T))
+    
+      simp_list$MARGALEF_HYBD_S <- 
+        sigmoid_scale(simp_list$MARGALEF_HYBD)
+      #decimal_scale(simp_list$MARGALEF_HYBD)
+      #(simp_list$MARGALEF_HYBD - min(simp_list$MARGALEF_HYBD,na.rm = T))/
+      #(max(simp_list$MARGALEF_HYBD,na.rm = T)-min(simp_list$MARGALEF_HYBD,na.rm = T))
     
     ################################################################################
     message("Calculating index as ACE * ATKINSON")
@@ -1086,7 +1133,7 @@
   x2 <- composition_country(outdir, collection_name,plot_type="Simpson")
   x2$collection <-  collection_name
   ################################################################################
-   collection_name <- "forages"
+  collection_name <- "forages"
   x3 <- composition_country(outdir, collection_name,plot_type="Margalef")
   x3 <- composition_country(outdir, collection_name,plot_type="Simpson")
   x3$collection <-  collection_name
