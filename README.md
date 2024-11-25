@@ -65,7 +65,7 @@ A detailed explanation of each code is provided as follows:
 - A path to save outputs: outdir
 - Collection name: The collection name used (e.g. "beans")
 
-## Preprocessing (0_preprocessing.R )
+## 0. Preprocessing (0_preprocessing.R )
 
 ### Inputs
 
@@ -104,7 +104,7 @@ A detailed explanation of each code is provided as follows:
  -  Output 3: ["/", collection_name, "/", collection_name, "_IT_table_1.csv"]
  -  Main output:  ["/", collection_name, "/", collection_name, "_summary_table.csv"]
 
-## Preprocessing (1_Taxonomic_index_Country.R)
+## 1. Collection composition and taxonomy (1_Taxonomic_index_Country.R)
 
 ### Inputs
 > [!IMPORTANT]
@@ -144,11 +144,11 @@ x1 <-completeness_func(outdir = outdir,
 )
 ```
 
-## Ecogeography (2_Ecogeographic_index.R )
+## 2. Ecogeography (2_Ecogeographic_index.R )
 > [!IMPORTANT]
 > Download Terrestrial Ecoregions of the World https://files.worldwildlife.org/wwfcmsprod/files/Publication/file/6kcchn7e3u_official_teow.zip
 
-## Documentation completeness (3_completeness_index.R)
+## 3. Documentation completeness (3_completeness_index.R)
 >[!NOTE]
 >A detailed explanation of the fields used in Taxonomic Quality Score Index (TQS) are in the table 1, below.
 ### Inputs
@@ -185,7 +185,7 @@ x1 <-completeness_func(outdir = outdir,
                        TQI_df =TQI_df_beans)
 ```
 
-## Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage)
+## 4. Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage)
 
 ### Inputs
 > [!IMPORTANT]
@@ -226,7 +226,7 @@ x1 <- genetics_ind_function(outdir=outdir,
                             accessions_df=accessions_df)
 ```
 
-## Genetics diversity (When it is available!) (4_1_Genetics_distance)
+## 4.1. Genetics diversity (When it is available!) (4_1_Genetics_distance)
 
 ### Inputs
 > [!IMPORTANT]
@@ -254,7 +254,7 @@ x <- genetics_dist_function(outdir=outdir,
                        numCores=numCores,
                        gen_data=gen_data)
 ```
-## ECADI index calculation  (5_ECADI.R)
+## 5. ECADI index calculation  (5_ECADI.R)
 
 ### Inputs
 > [!IMPORTANT]
