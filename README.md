@@ -8,6 +8,8 @@ _______
 ![Figure 2.](https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/beans_ECADI_WILD.png)
 **Figure 2**. NIPALS graphical representation of the four main indicator to evaluate crop wild relatives taxa in CIAT bean collection. Each color represents a world region according to World bank criteria.
 _______
+# Main components of the ECADI idea: 
+
 This repository consists of a set of functions to calculate a series of indicators of coverage and diversity of a germplasm collection based on:
 
 - (i) Collection composition and taxonomy
