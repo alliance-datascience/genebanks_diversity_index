@@ -89,6 +89,29 @@ A detailed explanation of each code is provided as follows:
 > Download OLSON (2001)
 
 
+## Documentation completeness (3_completeness_index.R)
+
+### Inputs
+> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+>  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
+> Preprocessing Inputs:
+ - Passport data for CWR, landrace, and hybrids respectively: (passport_data_w, passport_data_l, passport_data_h)
+- Collection data with Passport Data Completeness Index (PDCI) [PCDI_df]
+- Collection data with Geographical Quality Score Index (GQS) [QGI_df]
+- Collection data with Taxonomic Quality Score Index (TQS) [TQI_df]
+
+### Steps done:
+- Call previous results using the RDS file from 0_preprocessing.R
+-   Joining PDCI, GQS, and TQS to passport data in collection subsets
+- Obtaining summarizing metrics (mean, sd) for PDCI, GQS, and TQS and standardize to obtain values from 0 to 1 for the three quality data metrics
+- Obtaining indicator per country as the geometric mean of species per country and collection subset (Main output) 
+- Obtaining regions using ISO3 information from count matrices
+- Plotting using NIPALS for CWR and landraces (Output 2A or Output 2B) 
+        
+### Outputs:
+ - Main output: ["/",   collection_name,"/",collection_name,"_completeness_countries.csv"]
+-  [ "/",  collection_name,"/", collection_name",_"completeness_LANDRACE.png"] or  [ "/",  collection_name,"/", collection_name",_"completeness_WILD.png"] 
+
 
 
 
