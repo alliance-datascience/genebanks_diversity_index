@@ -20,12 +20,12 @@ _______
 # Description:
 
 This code performs the following steps:
-- Preprocessing (0_preprocessing.R )
+- Preprocessing (0_preprocessing.R)
 - Collection composition and taxonomy (1_Taxonomic_index_Country.R)
 - (ii) Ecogeography (2_Ecogeographic_index.R)
-- (iii) Documentation completeness (3_completeness_index)
+- (iii) Documentation completeness (3_completeness_index.R)
 - (iv) Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
-- (iv (a) ) Genetics diversity (4_1_Genetics_distance.R)
+- (iv[a]) Genetics diversity (4_1_Genetics_distance.R)
 _______
 
 # Recommendations:
@@ -36,7 +36,24 @@ _______
 - The Geographical quality score, and taxonomic geographical score can be obtained from https://github.com/alliance-datascience/genebank-general/tree/dev
 - Only use accessions with high and medium geographical quality score to run the Ecogeography (2_Ecogeographic_index.R) step
 - If genetic data is not available please use the step Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
-- The ECADI must be interpreated using the four components together!
+- The ECADI must be interpreted using the four components together!
+  
+_______
+# How to run this code? This must the order of running:
+ ## 1) MANDATORY PREPROCESSING
+ - (i) 0_preprocessing.R (MANDATORY)
+ ## 2) The following codes can be run regardless the order.
+ - (ii) 1_Taxonomic_index_Country.R
+ - (iii) 2_Ecogeographic_index.R
+ - (iv) 3_completeness_index.R
+ - (v) 4_Genetic_sequenced_coverage.R
+  
+> [!NOTE]
+> If you have a distance matrix, please use 4_1_Genetics_distance.R. Nevertheless, this pipeline was designed to use 4_Genetic_sequenced_coverage.R!
+
+## 3) MANDATORY SUMMARY STEP
+ - (vi) ECADI.R (MANDATORY)
+
 
 _______
 # Description of each step: 
