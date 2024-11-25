@@ -327,8 +327,13 @@ x1 <- ECADI_function(outdir = outdir,
 _______
 _______
 _______
+# Authors
 
-# Additional information
+Main:Chrystian C. Sosa, and Maria Victoria Diaz
+
+Other contributors: Norma Giraldo
+
+## Additional information
 Table 1. The Multi-crop Passport Descriptors (MCPD) V.2.1 (Alercia et al., 2015) used for the TCS. Extracted from https://www.genesys-pgr.org/documentation/basics#accedoc-tax. 
 
 field name | Description |
