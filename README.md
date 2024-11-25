@@ -1,4 +1,8 @@
 # An ex-situ conservation assessment diversity index (ECADI) for evaluating the coverage and diversity in genebank collections
+![Radar chart](https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/beans_ECADI_PLOT.png)
+
+
+
 
 This repository consists of a set of functions to calculate a series of indicators of coverage and diversity of a germplasm collection based on:
 
