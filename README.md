@@ -19,7 +19,7 @@ This code performs the following steps:
 
 A detailed explanation of each code is provided as follows:
 
-## Preprocessing (0_preprocessing.R)
+## Preprocessing (0_preprocessing.R )
 
 ### Inputs
 > [!IMPORTANT]
@@ -46,16 +46,41 @@ A detailed explanation of each code is provided as follows:
 - Obtain taxonomic matching using WorldFlora Online taxonomy
 - Obtain native areas using GRIN taxonomy information (output 2)
 - Obtain IUCN conservation status
-- Obtain biodiversity general metrics (Atkinson, Simpson, Margalef)  (output 3)
-- Save previous step in one RDS file to use further (Output 4)
+- Obtain biodiversity general metrics (Atkinson, Simpson, Margalef)  (output 3) 
 - Create a summary table with taxonomy status in GRIN and WorldFlora, and IUCN status (Main output)
 
 ### Outputs:
  -  Output 1: ["/", collection_name, "/", collection_name,"_count_matrix_countries_1.csv"]
  -  Output 2: ["/", collection_name, "/", collection_name, "_native_iso3_new_1.csv"]
  -  Output 3: ["/", collection_name, "/", collection_name, "_IT_table_1.csv"]
- -  Output 4: ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
  -  Main output:  ["/", collection_name, "/", collection_name, "_summary_table.csv"]
+
+## Preprocessing (1_Taxonomic_index_Country.R)
+
+### Inputs
+> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+>  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
+> Preprocessing Inputs:
+ - Summary table with taxonomy status in GRIN and WorldFlora, and IUCN status - geography.txt (geographical information for taxa)
+ - taxonomy_geography_map.txt (geographical information for taxa and connecting table)
+
+### Steps done:
+- Call previous results using the RDS file from 0_preprocessing.R
+- Call summary table (0_preprocessing.R)
+- Obtaining taxa proportion in GRIN and WorlFlora per crop wild relatives (CWR), landraces, and hybrids subsets
+- Obtaining Coverage metrics (Chao 2012). (Alternative)
+- Obtaining Effective number of species (Hill-Simpson, as well known as ENS), Margalef, 1- Atkison (1-A) per collection subset and countries
+- Obtaining Abundance Coverage estimator per collection subset and countries (alternative)
+- Normalize ENS and Margalef using Sigmoid scaling *D is either ENS or Margalef
+- Calculating composition index as D*1-A in a summary file per country and collection subset (Main output)
+- Obtaining regions using ISO3 information from count matrices
+- Plotting using NIPALS for CWR and landraces (Ouput 2A or Output 2B) 
+        
+### Outputs:
+ - Main output: ["/",   collection_name,"/",collection_name,"_composition_countries.csv"]
+-  (Ouput 2A or Output 2B): [ "/",  collection_name,"/", collection_name, "_",plot_type,"_composition_LANDRACE.png"] or  ["/",collection_name,"/",collection_name, "_",plot_type,"_composition_WILD.png"]
+>plot_type refers to what kind of biodiversity index (“simpson”,”margalef”) for ENS or Margalef.
+
 
 
 
@@ -63,7 +88,9 @@ A detailed explanation of each code is provided as follows:
 > [!IMPORTANT]
 > Download OLSON (2001)
 
-> 
+
+
+
 
 
 
