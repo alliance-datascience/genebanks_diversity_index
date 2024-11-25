@@ -26,6 +26,7 @@ This code performs the following steps:
 - (iii) Documentation completeness (3_completeness_index.R)
 - (iv) Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
 - (iv[a]) Genetics diversity (4_1_Genetics_distance.R)
+- (v) Ex-situ conservation assessment diversity index (ECADI)
 _______
 
 # Recommendations:
@@ -36,7 +37,10 @@ _______
 - The Geographical quality score, and taxonomic geographical score can be obtained from https://github.com/alliance-datascience/genebank-general/tree/dev
 - Only use accessions with high and medium geographical quality score to run the Ecogeography (2_Ecogeographic_index.R) step
 - If genetic data is not available please use the step Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
-- The ECADI must be interpreted using the four components together!
+
+> [!CAUTION]
+> The ECADI must be interpreted using the four components together!
+> This code was designed to calculate Hill-Simpson (Effective Number of Species), and Margalef. The main output for the ECADI was calculated using Hill-Simpson!
   
 _______
 # How to run this code? This must be the order of running:
