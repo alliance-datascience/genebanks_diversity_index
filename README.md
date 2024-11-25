@@ -263,7 +263,6 @@ x <- genetics_dist_function(outdir=outdir,
 
 ```r
 collection_name <- "beans"
-
 x1 <- ECADI_function(outdir = outdir,
                            eco_file = eco_file,
                            collection_name = collection_name
