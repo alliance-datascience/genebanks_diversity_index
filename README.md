@@ -19,7 +19,7 @@ This code performs the following steps:
 
 A detailed explanation of each code is provided as follows:
 
-## Preprocessing (0_preprocessing.R )
+## Preprocessing (0_preprocessing.R)
 
 ### Inputs
 > [!IMPORTANT]
@@ -46,13 +46,15 @@ A detailed explanation of each code is provided as follows:
 - Obtain taxonomic matching using WorldFlora Online taxonomy
 - Obtain native areas using GRIN taxonomy information (output 2)
 - Obtain IUCN conservation status
-- Obtain biodiversity general metrics (Atkinson, Simpson, Margalef)  (output 3) 
+- Obtain biodiversity general metrics (Atkinson, Simpson, Margalef)  (output 3)
+- Save previous step in one RDS file to use further (Output 4)
 - Create a summary table with taxonomy status in GRIN and WorldFlora, and IUCN status (Main output)
 
 ### Outputs:
  -  Output 1: ["/", collection_name, "/", collection_name,"_count_matrix_countries_1.csv"]
  -  Output 2: ["/", collection_name, "/", collection_name, "_native_iso3_new_1.csv"]
  -  Output 3: ["/", collection_name, "/", collection_name, "_IT_table_1.csv"]
+ -  Output 4: ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
  -  Main output:  ["/", collection_name, "/", collection_name, "_summary_table.csv"]
 
 
