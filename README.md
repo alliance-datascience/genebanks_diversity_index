@@ -131,8 +131,18 @@ A detailed explanation of each code is provided as follows:
 -  (Output 2A or Output 2B): [ "/",  collection_name,"/", collection_name, "_",plot_type,"_composition_LANDRACE.png"] or  ["/",collection_name,"/",collection_name, "_",plot_type,"_composition_WILD.png"]
 >plot_type refers to what kind of biodiversity index (“simpson”,”margalef”) for ENS or Margalef.
 
-
-
+```r
+collection_name <- "beans"
+PCDI_df_beans <- PCDI_df[which(PCDI_df$CROPNAME==collection_name),]
+QGI_df_beans <- QGI_df[which(QGI_df$CROPNAME==collection_name),]
+TQI_df_beans <- TQI_df[which(TQI_df$CROPNAME==collection_name),]
+x1 <-completeness_func(outdir = outdir,
+                       collection_name = collection_name,
+                       PCDI_df = PCDI_df_beans,
+                       QGI_df = QGI_df_beans,
+                       TQI_df =TQI_df_beans)
+)
+```
 
 ## Ecogeography (2_Ecogeographic_index.R )
 > [!IMPORTANT]
@@ -163,7 +173,17 @@ A detailed explanation of each code is provided as follows:
  - Main output: ["/",   collection_name,"/",collection_name,"_completeness_countries.csv"]
  -  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"completeness_LANDRACE.png"] or  [ "/",  collection_name,"/", collection_name",_"completeness_WILD.png"] 
 
-
+```r
+collection_name <- "beans"
+PCDI_df_beans <- PCDI_df[which(PCDI_df$CROPNAME==collection_name),]
+QGI_df_beans <- QGI_df[which(QGI_df$CROPNAME==collection_name),]
+TQI_df_beans <- TQI_df[which(TQI_df$CROPNAME==collection_name),]
+x1 <-completeness_func(outdir = outdir,
+                       collection_name = collection_name,
+                       PCDI_df = PCDI_df_beans,
+                       QGI_df = QGI_df_beans,
+                       TQI_df =TQI_df_beans)
+```
 
 ## Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage)
 
@@ -196,7 +216,16 @@ A detailed explanation of each code is provided as follows:
 - Output 1: ["/", collection_name,"/", collection_name, "_4_genetics_summary_table.csv]
 - Output 2: ["/", collection_name,"/", collection_name, "_4_GI_table.csv"]
 - Main output: ["/", collection_name,"/", collection_name, "_4_GI_country_table.csv]
--  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"usability_land.png"] or  [ "/",  collection_name,"/", collection_name",_"usability_WILD.png"] 
+-  (Output 2A or Output 2B) [ "/",  collection_name,"/", collection_name",_"usability_land.png"] or  [ "/",  collection_name,"/", collection_name",_"usability_WILD.png"]
+
+```r
+collection_name = "beans"
+x1 <- genetics_ind_function(outdir=outdir, 
+                            collection_name=collection_name, 
+                            numCores=4,
+                            accessions_df=accessions_df)
+```
+
 ## Genetics diversity (When it is available!) (4_1_Genetics_distance)
 
 ### Inputs
@@ -219,13 +248,28 @@ A detailed explanation of each code is provided as follows:
  - Output 1: ["/", collection_name,"/", collection_name, "_4_1_Genetic_distance_summary.csv"]
 - Main output: ["/", collection_name,"/", collection_name, "_4_1_Genetic_distance_country.csv"]
 
-
+```r
+x <- genetics_dist_function(outdir=outdir,
+                       collection_name=collection_name,
+                       numCores=numCores,
+                       gen_data=gen_data)
+```
 ## ECADI index calculation  (5_ECADI.R)
 
 ### Inputs
 > [!IMPORTANT]
 > This code uses the results per country calculated in steps 1 to 4.
 >  eco_file: the file with the ecogeographical index calculated in the 2_Ecogeographic_index.R file
+
+```r
+collection_name <- "beans"
+
+x1 <- ECADI_function(outdir = outdir,
+                           eco_file = eco_file,
+                           collection_name = collection_name
+)
+```
+
 
 
 ### Steps done:
@@ -255,6 +299,7 @@ A detailed explanation of each code is provided as follows:
 - Main output: ["/", collection_name,"/", collection_name, "_ECADI.CSV]
 - (Output 2A or Output 2B): [ "/",  collection_name, "/", collection_name,      "_",  "ECADI_WILD.png"]
 - Output3: ["/",  collection_name,  "/",   collection_name,  "_",  "ECADI_PLOT.png]
+
 
 
 _______
