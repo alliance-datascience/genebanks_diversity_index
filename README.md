@@ -1,9 +1,10 @@
 # An ex-situ conservation assessment diversity index (ECADI) for evaluating the coverage and diversity in genebank collections
-![Radar chart](https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/beans_ECADI_PLOT.png)
-
-
-
-
+![Figure 1.](https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/beans_ECADI_PLOT.png)
+Figure 1. Radar chart with the main metrics calculated for the four main components of The ex-situ conservation assessment diversity index (ECADI) (i) Collection composition and taxonomy (Composition), (ii) Documentation completeness (Documentation), (iii) Ecogeographical representativeness (Ecogeography), and (iv) Genetics diversity and genetic usability information availability (Usability). The blue color represents the values obtained for Crop Wild Relatives and red represents the values obtained for landraces for Beans CIAT collection
+_______
+![Figure 2.](https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/beans_ECADI_WILD.png)
+Figure 2. NIPALS graphical representation of the four main indicator to evaluate crop wild relatives taxa in CIAT bean collection. Each color represents a world region according to World bank criteria.
+_______
 This repository consists of a set of functions to calculate a series of indicators of coverage and diversity of a germplasm collection based on:
 
 - (i) Collection composition and taxonomy
