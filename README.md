@@ -40,7 +40,8 @@ _______
 
 > [!CAUTION]
 > The ECADI must be interpreted using the four components together!
-> This code was designed to calculate Hill-Simpson (Effective Number of Species), and Margalef. The main output for the ECADI was calculated using Hill-Simpson!
+- This code was designed to calculate Hill-Simpson (Effective Number of Species), and Margalef.
+- The main output for the ECADI was calculated using Hill-Simpson!
   
 _______
 # How to run this code? This must be the order of running:
