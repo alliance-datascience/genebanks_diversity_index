@@ -27,6 +27,7 @@ A detailed explanation of each code is provided as follows:
 
 ### Preprocessing (0_preprocessing.R )
 
+#### Inputs
 > [!IMPORTANT]
 > Download GRIN information from https://npgsweb.ars-grin.gov/gringlobal/uploads/documents/taxonomy_data.cab
 
@@ -38,71 +39,35 @@ A detailed explanation of each code is provided as follows:
 > CIAT germplasm data in MCDP format:
 - genesys-accessions-COL003.csv
 
-> WorldFlora Online inpui
+> [!IMPORTANT]
+> WorldFlora Online input:
+> Download this file: https://files.worldfloraonline.org/files/WFO_Backbone/_WFOCompleteBackbone/WFO_Backbone.zip
+
+> Add a key for IUCN API: Please obtain your API signing up here:https://api.iucnredlist.org/
+
+#### Steps done:
+- Filter by Crop wild relatives (CWR), landraces and hybrids. This step discard breeding materials!
+- Creating count matrices per CWR and landraces: rows are taxa and columns are countries (output 1)
+- Obtain taxonomic matching using GRIN taxonomy
+- Obtain taxonomic matching using WorldFlora Online taxonomy
+- Obtain native areas using GRIN taxonomy information (output 2)
+- Obtain IUCN conservation status
+- Obtain biodiversity general metrics (Atkinson, Simpson, Margalef)  (output 3) 
+- Create a summary table with taxonomy status in GRIN and WorldFlora, and IUCN status (Main output)
+
+#### Outputs:
+ -  Output 1: ["/", collection_name, "/", collection_name,"_count_matrix_countries_1.csv"]
+ -  Output 2: ["/", collection_name, "/", collection_name, "_native_iso3_new_1.csv"]
+ -  Output 3: ["/", collection_name, "/", collection_name, "_IT_table_1.csv"]
+ -  Main output:  ["/", collection_name, "/", collection_name, "_summary_table.csv"]
 
 
 
-```r
-################################################################################
-dir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX"
-#dir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX"
-################################################################################
-#outdir
-outdir <- paste0(dir, "/BEANS/RESULTS")
-################################################################################
+### Ecogeography (2_Ecogeographic_index.R )
+> [!IMPORTANT]
+> Download OLSON (2001)
 
-inDir <- "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
-#inDir <- "D:/ONEDRIVE/cgiar/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/A"
-tax_table <- "taxonomy_species.txt"
-geo_table <- "geography.txt"
-taxonomy_geography_map_table <- "taxonomy_geography_map.txt"
-#the logic is use tax table to obtain current grin tax id, then join with taxonomy_geography_map_table to
-#obtain the geography_id, first filter using the geography_status_code
-#finally use the geo_table to get the ISO3 and is_valid is_valid
-################################################################################
-#reading taxonomy table 
-if(!exists("tax")){
-  tax <- data.table::fread(paste0(inDir, "/", tax_table))  
-  #obtaining taxon status (wild or landrace)
-  stat <- strsplit(tax$name, " ")
-  #status
-  tax$GENUS <- trimws(unlist(lapply(stat, `[[`, 1)))
-  tax <- as.data.frame(tax)
-}
-
-################################################################################
-#geography data 
-if(!exists("geo")){
-  geo <- as.data.frame(data.table::fread(paste0(inDir, "/", geo_table)))
-  }
-
-#table with geography and taxonomy data
-if(!exists("tax_geo")){
-tax_geo <- as.data.frame(data.table::fread(paste0(inDir, "/", taxonomy_geography_map_table)))
-}
-################################################################################
-#read PDCI data
-#passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/ciat_pdci.csv"), na.strings = NA)
-if(!exists("passport_data_original")){
-  passport_data_original <- read.csv(paste0(dir, "/", "CIAT Data/genesys-accessions-COL003.csv"),
-                                     na.strings = NA)  
-}
-
-#subsetting to beans
-# passport_data_orig <- passport_data_orig[which(passport_data_orig$GENUS ==
-################################################################################
-#API to obtain IUCN status
-API <- "mtfcmg5AttZ2kaJSWdsq9MkEjfhW41gjeSvm"
-################################################################################
-#Loading WorldFlora Online
-if(!exists("WFO.data")){
-WorldFlora::WFO.remember("D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO_Backbone.zip")
-}
-  #WorldFlora::WFO.remember(WFO.file = "D:/OneDrive - CGIAR/GERMPLASM_INDEX/COMPRESSED_FILES/WFO/classification.csv")
-
-################################################################################
-```
-
+> 
 
 
 
