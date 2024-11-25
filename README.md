@@ -152,7 +152,7 @@ A detailed explanation of each code is provided as follows:
 - Using information from summary table to obtain IUCN threatened species in collection subsets and country using the following categories:  "Vulnerable”, “Endangered”, “Critically Endangered”, “Extinct in the Wild". This metric is IUCN threathed/total taxa in the subset.
 - Obtaining summarizing metrics per country for proportion of records sequenced (pRseq) and proportion of taxa sequenced (pTseq) per each collection subset
 - Obtaining usability index as the average of pRseq, pTseq, and IUCN.
-> [Note]
+> [!Note]
 > The metrics for the collection subsets is a weighted mean considering the number of records in a total collection (CWR, landraces, and hybrids).
 - Save a summary table of the subset collection including taxa proportions: (Output 1) 
 - A general summary table for collection subsets (Output 2)
@@ -198,7 +198,7 @@ A detailed explanation of each code is provided as follows:
 
 ### Steps done:
 - Load the composition index: ["/", collection_name,"/", collection_name, "_composition_countries.csv"]
--     Load the ecogeographical representativeness index from the eco_file
+- Load the ecogeographical representativeness index from the eco_file
 - Load the documentation completeness index: ["/", collection_name,"/", collection_name, "_completeness_countries.csv"]
 - Load the usability index: ["/", collection_name,"/", collection_name, "_4_GI_country_table.csv"]
 - Load the genetic distance index file: ["/", collection_name,"/", collection_name, "_4_1_Genetic_distance_country.csv"]
