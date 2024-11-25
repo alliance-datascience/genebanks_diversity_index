@@ -48,11 +48,11 @@ _______
  - [ ] (iv) 3_completeness_index.R
  - [ ] (v) 4_Genetic_sequenced_coverage.R
   
-> [!NOTE]
+> [!CAUTION]
 > If you have a distance matrix, please use 4_1_Genetics_distance.R. Nevertheless, this pipeline was designed to use 4_Genetic_sequenced_coverage.R!
 
 ## 3) MANDATORY SUMMARY STEP
- - (vi) 5_ECADI.R (MANDATORY)
+ - [ ] (vi) 5_ECADI.R (MANDATORY)
 
 
 _______
