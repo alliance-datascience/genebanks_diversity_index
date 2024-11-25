@@ -26,8 +26,19 @@ A detailed explanation of each code is provided as follows:
 
 
 ### Preprocessing (0_preprocessing.R )
-- Inputs:
 
+> [!IMPORTANT]
+> Download GRIN information from https://npgsweb.ars-grin.gov/gringlobal/uploads/documents/taxonomy_data.cab
+
+> GRIN Inputs:
+ - taxonomy_species.txt (taxonomy)
+ - geography.txt (geographical information for taxa)
+ - taxonomy_geography_map.txt (geographical information for taxa and connecting table)
+
+> CIAT germplasm data in MCDP format:
+- genesys-accessions-COL003.csv
+
+> WorldFlora Online inpui
 
 
 
