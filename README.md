@@ -52,7 +52,7 @@ _______
 > If you have a distance matrix, please use 4_1_Genetics_distance.R. Nevertheless, this pipeline was designed to use 4_Genetic_sequenced_coverage.R!
 
 ## 3) MANDATORY SUMMARY STEP
- - (vi) ECADI.R (MANDATORY)
+ - (vi) 5_ECADI.R (MANDATORY)
 
 
 _______
