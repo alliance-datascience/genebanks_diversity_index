@@ -103,8 +103,7 @@ A detailed explanation of each code is provided as follows:
 
 ## Ecogeography (2_Ecogeographic_index.R )
 > [!IMPORTANT]
-> Download OLSON (2001)
-
+> Download Terrestrial Ecoregions of the World https://files.worldwildlife.org/wwfcmsprod/files/Publication/file/6kcchn7e3u_official_teow.zip
 
 ## Documentation completeness (3_completeness_index.R)
 >[!NOTE]
