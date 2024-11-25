@@ -6,7 +6,12 @@ This repository consists of a set of functions to calculate a series of indicato
 - (ii) Ecogeography
 - (iii) Documentation completeness
 - (iv) Genetics diversity and genetic usability information availability
- 
+
+_______
+_______
+_______
+
+
 # Description:
 
 This code performs the following steps:
@@ -16,16 +21,20 @@ This code performs the following steps:
 - (iii) Documentation completeness (3_completeness_index)
 - (iv) Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
 - (iv) Genetics diversity (4_1_Genetics_distance.R)
+_______
+
+
 
 A detailed explanation of each code is provided as follows:
 
 
-## Preprocessing (0_preprocessing.R )
-
-### Share inputs for codes:
+> [!IMPORTANT]
+> Share inputs for codes:
 - A path to save outputs: outdir
 - Collection name: The collection name used (e.g. "beans")
-  
+
+## Preprocessing (0_preprocessing.R )
+
 ### Inputs
 
 
@@ -97,15 +106,17 @@ A detailed explanation of each code is provided as follows:
 
 
 ## Documentation completeness (3_completeness_index.R)
-
+>[!NOTE]
+>A detailed explanation of the fields used in Taxonomic Quality Score Index (TQS) are in the table 1, below.
 ### Inputs
-> [!IMPORTANT] This code uses the RDS calculated in the preprocessing step 
+> [!IMPORTANT]
+> This code uses the RDS calculated in the preprocessing step 
 >  ["/", collection_name, "/", collection_name,"_subsets_new_1.RDS"]
 > Preprocessing Inputs:
  - Passport data for CWR, landrace, and hybrids respectively: (passport_data_w, passport_data_l, passport_data_h)
 - Collection data with Passport Data Completeness Index (PDCI) [PCDI_df]
 - Collection data with Geographical Quality Score Index (GQS) [QGI_df]
-- Collection data with Taxonomic Quality Score Index (TQS) [TQI_df]
+- Collection data with Taxonomic Quality Score Index (TQS) [TQI_df] 
 
 ### Steps done:
 - Call previous results using the RDS file from 0_preprocessing.R
@@ -209,6 +220,9 @@ A detailed explanation of each code is provided as follows:
 - Output3: ["/",  collection_name,  "/",   collection_name,  "_",  "ECADI_PLOT.png]
 
 
+_______
+_______
+_______
 
 # Additional information
 Table 1. The Multi-crop Passport Descriptors (MCPD) V.2.1 (Alercia et al., 2015) used for the TCS. Extracted from https://www.genesys-pgr.org/documentation/basics#accedoc-tax. 
