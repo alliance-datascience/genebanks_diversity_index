@@ -34,7 +34,7 @@ This code performs the following steps:
 - (iii) Documentation completeness (3_completeness_index.R)
 - (iv) Genetics diversity and genetic usability information availability (4_Genetic_sequenced_coverage.R)
 - (iv[a]) Genetics diversity (4_1_Genetics_distance.R)
-- (v) Ex-situ conservation assessment diversity index (ECADI)
+- (v) Ex-situ conservation assessment diversity index (5_ECADI.R)
 _______
 
 # Recommendations:
