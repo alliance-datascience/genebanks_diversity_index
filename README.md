@@ -8,7 +8,7 @@ _______
 
 ## Graphical summary:
 
-A graphical summary is available here: 
+**Figure 1**. A graphical summary of the workflow is available here: 
 (https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/DIAGRAM_METRICS.drawio.png)
 _______
 ## Outputs examples: 
