@@ -189,7 +189,7 @@ x2 <- index_function(
 
 ## 3. Documentation completeness (3_completeness_index.R)
 >[!NOTE]
->A detailed explanation of the fields used in Taxonomic Quality Score Index (TQS) are in the table 1, below.
+>A detailed explanation of the fields used in Taxonomic Quality Score Index (TQS) is in the table 1, below.
 ### Inputs
 > [!IMPORTANT]
 > This code uses the RDS calculated in the preprocessing step 
