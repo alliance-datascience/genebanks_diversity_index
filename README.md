@@ -364,8 +364,8 @@ SUBTAXA | A subtaxon can be used to store any additional taxonomic identifier. T
 SUBTAUTHOR | The subtaxon authority at the most detailed taxonomic level.
 _______
 
-For a detailed description of the archives and the files fields obtained in this code check these files:
+For a detailed description of the archives and the files fields obtained in this code, check these files:
 - https://github.com/ccsosa/genebanks_diversity_index/blob/dev/Archives_description.xlsx #Outcomes directory
-- https://github.com/ccsosa/genebanks_diversity_index/blob/dev/Archives_description.xlsx #Outcomes metadata description
+- https://github.com/ccsosa/genebanks_diversity_index/blob/dev/Outcomes_metadata.xlsx #Outcomes metadata description
 
 
