@@ -1,4 +1,5 @@
 # An ex-situ conservation assessment diversity index (ECADI) for evaluating the coverage and diversity in genebank collections
+# Find the report related to this repository here: https://cgspace.cgiar.org/items/14c9024f-24d4-4f08-8419-f6b7572aad49
 _______
 ![Figure 1.](https://github.com/alliance-datascience/genebanks_diversity_index/blob/dev/README_FILES/ECADI_COMPONENT.png)
 **Figure 1**. Graphical scheme of the components evaluated in the ex-situ conservation assessment diversity index (ECADI). 
